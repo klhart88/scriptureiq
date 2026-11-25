@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
-};
+// Every page is per-member and reads the session cookie, so pages render on request.
+const nextConfig: NextConfig = {};
 
 export default nextConfig;

@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ScriptureIQ
 
-## Getting Started
+A web app (installable to the home screen) for the BibleProject plan *One Story That Leads to Jesus* — 358 days, NIV.
 
-First, run the development server:
+This first build covers the private reading-and-notes side of the design:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+| Module | Status |
+| --- | --- |
+| **Today** — Before you read (pre-read, video), Reading (passage + psalm, read-aloud, block tracker, Go deeper links), calendar and catch-up | Built |
+| **My Study Notes** — one entry per day with Q1–Q3 loaded, autosaving answers, own questions, reorder/delete, browse by day or book | Built |
+| **Member login** — email + password through Supabase Auth; start date set by each member | Built |
+| **Talk It Over** — groups, invite links, one thread per day | Database and privacy rules built; screens are the next phase |
+| **Study Aggregate** — answers from your own notes, using Claude | Planned (phase 7) |
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Next.js 16** (App Router) on **Vercel**
+- **Supabase**: Auth, Postgres, row-level security on every private table
+- **YouVersion Platform** for NIV text, fetched live and never stored
+- **Anthropic API** reserved for Study Aggregate
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup
 
-## Learn More
+1. **Supabase project.** Create a project, then in the SQL editor run, in order:
+   - `supabase/migrations/0001_schema.sql`
+   - `supabase/seed.sql` (loads all 358 plan days with their pre-reads and approved questions)
 
-To learn more about Next.js, take a look at the following resources:
+   In *Authentication → URL Configuration*, set the Site URL to your app's address and add `https://YOUR-DOMAIN/auth/confirm` (and `http://localhost:3000/auth/confirm`) to the redirect URLs.
+2. **Environment.** Copy `.env.example` to `.env.local` and fill in the Supabase URL and publishable key.
+3. **Run locally.** `npm install`, then `npm run dev`, and open http://localhost:3000.
+4. **Deploy.** Import the repository in Vercel and add the same environment variables there.
+5. **NIV text (when ready).** Register at platform.youversion.com, accept the NIV licence for your app key, and set `YOUVERSION_APP_KEY`. Until then, each passage shows *Read on Bible.com* and *Mark as read*, so the tracker still works.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Updating plan content
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The workbook is the source of truth. Export the Schedule, Story map and Daily content tabs to `supabase/plan_days.json`, run `npm run seed` to rebuild `supabase/seed.sql`, and run it again in Supabase. It updates rows in place, and members' notes are untouched (each entry keeps a snapshot of the questions it was opened with).
 
-## Deploy on Vercel
+## Privacy model
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Every private row (`day_progress`, `note_entries`, `note_items`) carries `user_id`, and row-level security allows only its owner to read or write it.
+- Groups and posts are visible only to group members. A member can only be added through the owner trigger or the `join_group(invite_token)` function.
+- Nothing links a group post to a private note.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`supabase/tests/` holds a privacy test you can run against a plain Postgres: `auth_stub.sql`, then the migration and seed, then `rls_test.sql`. It checks that one member cannot see or write another's notes or progress, and that non-members cannot read or post in a group.
+
+## Tests
+
+`npm test` checks that every plan day's reading code parses, the date-to-day mapping, and the passage splitting used by read-aloud.
