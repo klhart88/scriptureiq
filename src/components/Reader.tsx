@@ -6,67 +6,112 @@ import { saveProgress, type SegmentProgress } from "@/app/(app)/day/[day]/read/a
 type Block = { html: string; text: string };
 type PassageView = { label: string; blocks: Block[] | null; error?: string; externalUrl: string };
 type Pos = { segment: number; block: number };
+/** Paragraphs credited as read, per segment. */
+type ReadMap = Record<number, Set<number>>;
 
 const noop = () => () => {};
 const useCanSpeak = () => useSyncExternalStore(noop, () => "speechSynthesis" in window, () => false);
 
 const totalFor = (p: PassageView) => (p.blocks ? p.blocks.length : 1);
+const key = (p: Pos) => `${p.segment}:${p.block}`;
+
+/**
+ * Time a paragraph must stay in the reading band before it counts as read: about 60% of a
+ * comfortable reading pace (150 ms a word), never under 2.5 s or over 20 s. A quick scroll to see
+ * how long the reading is won't count; actually reading it will.
+ */
+const dwellNeeded = (text: string) => Math.min(20_000, Math.max(2_500, text.split(/\s+/).length * 150));
+
+/** Restores credited paragraphs. Older saves only stored a count, so credit that many from the top. */
+function restoreRead(saved: SegmentProgress, passages: PassageView[]): ReadMap {
+  const map: ReadMap = {};
+  passages.forEach((p, i) => {
+    const s = saved[i];
+    const total = totalFor(p);
+    const list = s?.read ?? Array.from({ length: Math.min(s?.done ?? 0, total) }, (_, j) => j);
+    map[i] = new Set(list.filter((j) => j < total));
+  });
+  return map;
+}
 
 export default function Reader({ day, passages, saved, position, completed }: {
   day: number; passages: PassageView[]; saved: SegmentProgress; position: Pos | null; completed: boolean;
 }) {
   const canSpeak = useCanSpeak();
-  const [progress, setProgress] = useState<SegmentProgress>(() => {
-    const p: SegmentProgress = {};
-    passages.forEach((ps, i) => { p[i] = { done: Math.min(saved[i]?.done ?? 0, totalFor(ps)), total: totalFor(ps) }; });
-    return p;
-  });
-  const [current, setCurrent] = useState<Pos>(position ?? { segment: 0, block: 0 });
+  const [read, setRead] = useState<ReadMap>(() => restoreRead(saved, passages));
+  const [here, setHere] = useState<Pos>(position ?? { segment: 0, block: 0 });
   const [playing, setPlaying] = useState(false);
   const [isComplete, setIsComplete] = useState(completed);
   const playingRef = useRef(false);
+  const hereRef = useRef(here);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const els = useRef(new Map<string, HTMLElement>());
-  const key = (p: Pos) => `${p.segment}:${p.block}`;
+  const dwell = useRef(new Map<string, number>());
 
-  const segDone = (p: SegmentProgress, i: number) => (p[i]?.done ?? 0) >= totalFor(passages[i]);
+  const segDone = (r: ReadMap, i: number) => (r[i]?.size ?? 0) >= totalFor(passages[i]);
 
-  const persist = useCallback((next: SegmentProgress, pos: Pos) => {
-    const done = passages.every((ps, i) => (next[i]?.done ?? 0) >= totalFor(ps));
+  const persist = useCallback((r: ReadMap, pos: Pos) => {
+    const segments: SegmentProgress = {};
+    passages.forEach((p, i) => {
+      const list = [...(r[i] ?? [])].sort((a, b) => a - b);
+      segments[i] = { done: list.length, total: totalFor(p), read: list };
+    });
+    const done = passages.every((p, i) => (r[i]?.size ?? 0) >= totalFor(p));
     if (done) setIsComplete(true);
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => { void saveProgress(day, next, pos, done); }, done ? 0 : 1200);
+    saveTimer.current = setTimeout(() => { void saveProgress(day, segments, pos, done); }, done ? 0 : 1500);
   }, [day, passages]);
 
-  /** Records that a block has been reached (read aloud or scrolled through). */
-  const markRead = useCallback((pos: Pos) => {
-    setProgress((prev) => {
-      const done = Math.max(prev[pos.segment]?.done ?? 0, pos.block + 1);
-      if (prev[pos.segment]?.done === done) return prev;
-      const next = { ...prev, [pos.segment]: { done, total: totalFor(passages[pos.segment]) } };
-      persist(next, pos);
+  /** Credits a paragraph as read. Credit is never taken away by scrolling back. */
+  const credit = useCallback((pos: Pos) => {
+    setRead((prev) => {
+      if (prev[pos.segment]?.has(pos.block)) return prev;
+      const next = { ...prev, [pos.segment]: new Set(prev[pos.segment]).add(pos.block) };
+      persist(next, hereRef.current);
       return next;
     });
-  }, [passages, persist]);
+  }, [persist]);
+
+  const moveHere = useCallback((pos: Pos) => {
+    hereRef.current = pos;
+    setHere((prev) => (prev.segment === pos.segment && prev.block === pos.block ? prev : pos));
+  }, []);
 
   // Resume where the reader stopped.
   useEffect(() => {
     if (position) els.current.get(key(position))?.scrollIntoView({ block: "center" });
   }, [position]);
 
-  // A block counts once it reaches the top 40% of the screen (or has scrolled past it).
+  // "Where you are" follows the paragraph crossing the reading line, in both directions.
   useEffect(() => {
     const obs = new IntersectionObserver((entries) => {
+      if (playingRef.current) return; // audio drives the position while it plays
       for (const e of entries) {
-        if (e.isIntersecting || e.boundingClientRect.bottom < 0) {
+        if (e.isIntersecting) {
           const el = e.target as HTMLElement;
-          markRead({ segment: Number(el.dataset.seg), block: Number(el.dataset.block) });
+          moveHere({ segment: Number(el.dataset.seg), block: Number(el.dataset.block) });
         }
       }
-    }, { rootMargin: "0px 0px -60% 0px", threshold: 0 });
+    }, { rootMargin: "-35% 0px -60% 0px", threshold: 0 });
     els.current.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
-  }, [markRead]);
+  }, [moveHere]);
+
+  // Time spent on the paragraph at the reading line earns it a "read" credit.
+  useEffect(() => {
+    const TICK = 500;
+    const id = setInterval(() => {
+      if (playingRef.current || document.visibilityState !== "visible") return;
+      const pos = hereRef.current;
+      const block = passages[pos.segment]?.blocks?.[pos.block];
+      if (!block) return;
+      const k = key(pos);
+      const t = (dwell.current.get(k) ?? 0) + TICK;
+      dwell.current.set(k, t);
+      if (t >= dwellNeeded(block.text)) credit(pos);
+    }, TICK);
+    return () => clearInterval(id);
+  }, [passages, credit]);
 
   useEffect(() => () => {
     window.speechSynthesis?.cancel();
@@ -91,13 +136,13 @@ export default function Reader({ day, passages, saved, position, completed }: {
   const speakFrom = (p: Pos) => {
     const block = passages[p.segment]?.blocks?.[p.block];
     if (!block) { const n = step(p, 1); if (n) speakFrom(n); else stop(); return; }
-    setCurrent(p);
+    moveHere(p);
     els.current.get(key(p))?.scrollIntoView({ block: "center", behavior: "smooth" });
     const u = new SpeechSynthesisUtterance(block.text);
     u.lang = "en-US";
     u.onend = () => {
       if (!playingRef.current) return;
-      markRead(p);
+      credit(p);
       const n = step(p, 1);
       if (n) speakFrom(n); else stop();
     };
@@ -105,31 +150,46 @@ export default function Reader({ day, passages, saved, position, completed }: {
     window.speechSynthesis.speak(u);
   };
 
-  const play = () => { playingRef.current = true; setPlaying(true); speakFrom(current); };
+  const play = () => { playingRef.current = true; setPlaying(true); speakFrom(hereRef.current); };
+  // Skipping moves "where you are" either way; it doesn't add or remove read credit.
   const skip = (dir: 1 | -1) => {
-    const n = step(current, dir);
+    const n = step(hereRef.current, dir);
     if (!n) return;
     if (playingRef.current) speakFrom(n);
-    else { setCurrent(n); els.current.get(key(n))?.scrollIntoView({ block: "center", behavior: "smooth" }); }
+    else { moveHere(n); els.current.get(key(n))?.scrollIntoView({ block: "center", behavior: "smooth" }); }
   };
 
-  const markSegment = (i: number) => markRead({ segment: i, block: 0 });
+  const markSegment = (i: number) => credit({ segment: i, block: 0 });
 
   const hasText = passages.some((p) => p.blocks);
-  const seg = passages[current.segment];
+  const seg = passages[here.segment];
+  const sectionsRead = passages.filter((_, i) => segDone(read, i)).length;
   const status = isComplete
     ? "Day complete ✓"
     : hasText && seg?.blocks
-      ? `${seg.label} · paragraph ${current.block + 1} of ${seg.blocks.length}`
-      : `${passages.filter((_, i) => segDone(progress, i)).length} of ${passages.length} read`;
+      ? `${seg.label} · paragraph ${here.block + 1} of ${seg.blocks.length} · ${sectionsRead} of ${passages.length} sections read`
+      : `${sectionsRead} of ${passages.length} read`;
 
   return (
     <div>
       <div className="sticky">
+        {hasText && (
+          <div className="legend" aria-hidden>
+            <span><b style={{ background: "var(--brand)" }} />Where you are</span>
+            <span><b style={{ background: "#b9dcc6" }} />Read</span>
+          </div>
+        )}
         <div className="tracker" aria-label="Reading progress">
           {passages.map((p, i) => {
-            const pct = Math.min(100, ((progress[i]?.done ?? 0) / totalFor(p)) * 100);
-            return <span key={i} title={p.label}><i style={{ width: `${pct}%` }} /></span>;
+            const total = totalFor(p);
+            const readPct = Math.min(100, ((read[i]?.size ?? 0) / total) * 100);
+            const herePct = !p.blocks ? 0 : i < here.segment ? 100 : i === here.segment ? ((here.block + 1) / total) * 100 : 0;
+            return (
+              <span key={i} title={`${p.label}: ${read[i]?.size ?? 0} of ${total} read`} className={segDone(read, i) ? "done" : undefined}>
+                <i className="read" style={{ width: `${readPct}%` }} />
+                {hasText && <i className="here" style={{ width: `${herePct}%` }} />}
+              </span>
+            );
           })}
         </div>
         <div className="spread small muted">
@@ -157,7 +217,7 @@ export default function Reader({ day, passages, saved, position, completed }: {
                   data-seg={i}
                   data-block={j}
                   ref={(el) => { if (el) els.current.set(`${i}:${j}`, el); else els.current.delete(`${i}:${j}`); }}
-                  className={`block${playing && current.segment === i && current.block === j ? " active" : ""}`}
+                  className={`block${playing && here.segment === i && here.block === j ? " active" : ""}`}
                   dangerouslySetInnerHTML={{ __html: b.html }}
                 />
               ))}
@@ -167,14 +227,16 @@ export default function Reader({ day, passages, saved, position, completed }: {
               {p.error && p.error !== "not-configured" && <p className="error small">Couldn&rsquo;t load this passage ({p.error}).</p>}
               <div className="row">
                 <a className="btn secondary" href={p.externalUrl} target="_blank" rel="noopener noreferrer">Read on Bible.com</a>
-                <button className="btn" onClick={() => markSegment(i)} disabled={segDone(progress, i)}>
-                  {segDone(progress, i) ? "Read ✓" : "Mark as read"}
+                <button className="btn" onClick={() => markSegment(i)} disabled={segDone(read, i)}>
+                  {segDone(read, i) ? "Read ✓" : "Mark as read"}
                 </button>
               </div>
             </div>
           )}
         </section>
       ))}
+      {/* Room to scroll the last paragraph up to the reading line. */}
+      {hasText && <div aria-hidden style={{ height: "40vh" }} />}
     </div>
   );
 }

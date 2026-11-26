@@ -10,6 +10,15 @@ test("splits paragraphs and strips verse numbers for speech", () => {
   assert.match(b[0].html, /verse-num/);
 });
 
+test("YouVersion markup: verse labels are styled, not spoken", () => {
+  const html = `<div><div class="pi"><span class="yv-v" v="1"></span><span class="yv-vlbl">1</span>In the beginning God created the heavens and the earth. <span class="yv-v" v="2"></span><span class="yv-vlbl">2</span>Now the earth was formless.</div><div class="li1"><span class="yv-v" v="3"></span><span class="yv-vlbl">3</span>And God said, “Let there be light,” and there was light.</div></div>`;
+  const b = toBlocks(html);
+  assert.equal(b.length, 2);
+  assert.equal(b[0].text, "In the beginning God created the heavens and the earth. Now the earth was formless.");
+  assert.match(b[0].html, /yv-vlbl/);
+  assert.equal(b[1].text, "And God said, “Let there be light,” and there was light.");
+});
+
 test("plain text: a short verse is one block", () => {
   const b = toBlocks("Jesus wept.");
   assert.equal(b.length, 1);

@@ -4,7 +4,8 @@ import { parse, type HTMLElement } from "node-html-parser";
 export type Block = { html: string; text: string };
 
 const BLOCK_SELECTOR = "p, .p, .m, .pi, .pi1, .q, .q1, .q2, .q3, .li, .li1, .li2, .d, .b";
-const STRIP_SELECTOR = "sup, .verse-num, .v, .yv-v, .label, .note, .yv-n, .f, .x";
+// Verse numbers and notes: shown small on screen, skipped by read-aloud. YouVersion labels verse numbers .yv-vlbl.
+const STRIP_SELECTOR = "sup, .yv-vlbl, .verse-num, .v, .label, .note, .yv-n, .f, .x";
 
 /** Splits passage markup into paragraphs / poetry lines for read-aloud and the tracker. */
 export function toBlocks(html: string): Block[] {

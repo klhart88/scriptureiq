@@ -3,7 +3,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { parseDayParam } from "@/lib/plan";
 
-export type SegmentProgress = Record<string, { done: number; total: number }>;
+/** Per segment: how many paragraphs are read, of how many, and which ones (indices). */
+export type SegmentProgress = Record<string, { done: number; total: number; read?: number[] }>;
 
 export async function saveProgress(day: number, segments: SegmentProgress, position: { segment: number; block: number } | null, complete: boolean) {
   if (!parseDayParam(String(day))) return { error: "bad day" };
