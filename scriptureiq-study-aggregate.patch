@@ -1,0 +1,714 @@
+diff --git a/package-lock.json b/package-lock.json
+index c64b612..4778b12 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -8,6 +8,7 @@
+       "name": "scriptureiq",
+       "version": "0.1.0",
+       "dependencies": {
++        "@anthropic-ai/sdk": "^1.14.0",
+         "@supabase/ssr": "^0.12.7",
+         "@supabase/supabase-js": "^2.119.2",
+         "next": "16.4.6",
+@@ -25,6 +26,28 @@
+         "typescript": "^5"
+       }
+     },
++    "node_modules/@anthropic-ai/sdk": {
++      "version": "1.14.0",
++      "resolved": "https://registry.npmjs.org/@anthropic-ai/sdk/-/sdk-1.14.0.tgz",
++      "integrity": "sha512-nADYXUd5fn9Zgw2nHi1iKyt/kb1UUt1cN3RbdxEI6XjTDTxbx4LLG4GnMrxWyS9GgXQllFOyAKSiFM3joDNK9A==",
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@opentelemetry/api": "^1.4.1",
++        "json-schema-to-ts": "^3.1.1",
++        "standardwebhooks": "^1.0.0"
++      },
++      "bin": {
++        "anthropic-ai-sdk": "bin/cli"
++      },
++      "peerDependencies": {
++        "zod": "^3.25.0 || ^4.0.0"
++      },
++      "peerDependenciesMeta": {
++        "zod": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@babel/code-frame": {
+       "version": "7.29.7",
+       "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.29.7.tgz",
+@@ -217,6 +240,15 @@
+         "node": ">=6.0.0"
+       }
+     },
++    "node_modules/@babel/runtime": {
++      "version": "7.29.15",
++      "resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.29.15.tgz",
++      "integrity": "sha512-304gsbbGVmQc+cNGHzwHBlqepYdWLKj3VXCQBGt/EGcV7PUPfKI7kAUNW1FZEOCwlQiLvQjg1JEaAlRQ616h+Q==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=6.9.0"
++      }
++    },
+     "node_modules/@babel/template": {
+       "version": "7.29.7",
+       "resolved": "https://registry.npmjs.org/@babel/template/-/template-7.29.7.tgz",
+@@ -1268,6 +1300,15 @@
+         "node": ">=12.4.0"
+       }
+     },
++    "node_modules/@opentelemetry/api": {
++      "version": "1.10.0",
++      "resolved": "https://registry.npmjs.org/@opentelemetry/api/-/api-1.10.0.tgz",
++      "integrity": "sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==",
++      "license": "Apache-2.0",
++      "engines": {
++        "node": ">=8.0.0"
++      }
++    },
+     "node_modules/@rtsao/scc": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/@rtsao/scc/-/scc-1.1.0.tgz",
+@@ -1275,6 +1316,12 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/@stablelib/base64": {
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/@stablelib/base64/-/base64-1.0.1.tgz",
++      "integrity": "sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==",
++      "license": "MIT"
++    },
+     "node_modules/@supabase/auth-js": {
+       "version": "2.119.2",
+       "resolved": "https://registry.npmjs.org/@supabase/auth-js/-/auth-js-2.119.2.tgz",
+@@ -3567,6 +3614,12 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/fast-sha256": {
++      "version": "1.3.0",
++      "resolved": "https://registry.npmjs.org/fast-sha256/-/fast-sha256-1.3.0.tgz",
++      "integrity": "sha512-n11RGP/lrWEFI/bWdygLxhI+pVeo1ZYIVwvvPkW7azl/rOy+F3HYRZ2K5zeE9mmkhQppyv9sQFx0JM9UabnpPQ==",
++      "license": "Unlicense"
++    },
+     "node_modules/fastq": {
+       "version": "1.20.3",
+       "resolved": "https://registry.npmjs.org/fastq/-/fastq-1.20.3.tgz",
+@@ -4532,6 +4585,19 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/json-schema-to-ts": {
++      "version": "3.1.1",
++      "resolved": "https://registry.npmjs.org/json-schema-to-ts/-/json-schema-to-ts-3.1.1.tgz",
++      "integrity": "sha512-+DWg8jCJG2TEnpy7kOm/7/AxaYoaRbjVB4LFZLySZlWn8exGs3A4OLJR966cVvU26N7X9TWxl+Jsw7dzAqKT6g==",
++      "license": "MIT",
++      "dependencies": {
++        "@babel/runtime": "^7.18.3",
++        "ts-algebra": "^2.0.0"
++      },
++      "engines": {
++        "node": ">=16"
++      }
++    },
+     "node_modules/json-schema-traverse": {
+       "version": "0.4.1",
+       "resolved": "https://registry.npmjs.org/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz",
+@@ -5672,6 +5738,16 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/standardwebhooks": {
++      "version": "1.3.0",
++      "resolved": "https://registry.npmjs.org/standardwebhooks/-/standardwebhooks-1.3.0.tgz",
++      "integrity": "sha512-5W9skHjqAm2dlA9wWvglTP+oX47JX4lFXVk1aJV7+TG1snvTR4QXaVgPscEzvOw9GRreeavMwbqEeL+MGhZHCg==",
++      "license": "MIT",
++      "dependencies": {
++        "@stablelib/base64": "^1.0.0",
++        "fast-sha256": "^1.3.0"
++      }
++    },
+     "node_modules/stop-iteration-iterator": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/stop-iteration-iterator/-/stop-iteration-iterator-1.1.0.tgz",
+@@ -5933,6 +6009,12 @@
+         "node": ">=8.0"
+       }
+     },
++    "node_modules/ts-algebra": {
++      "version": "2.0.0",
++      "resolved": "https://registry.npmjs.org/ts-algebra/-/ts-algebra-2.0.0.tgz",
++      "integrity": "sha512-FPAhNPFMrkwz76P7cdjdmiShwMynZYN6SgOujD1urY4oNm80Ou9oMdmbR45LotcKOXoy7wSmHkRFE6Mxbrhefw==",
++      "license": "MIT"
++    },
+     "node_modules/ts-api-utils": {
+       "version": "2.5.0",
+       "resolved": "https://registry.npmjs.org/ts-api-utils/-/ts-api-utils-2.5.0.tgz",
+@@ -6348,7 +6430,7 @@
+       "version": "4.6.7",
+       "resolved": "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz",
+       "integrity": "sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "MIT",
+       "funding": {
+         "url": "https://github.com/sponsors/colinhacks"
+diff --git a/package.json b/package.json
+index 2d4207b..d22b65a 100644
+--- a/package.json
++++ b/package.json
+@@ -11,6 +11,7 @@
+     "seed": "python3 scripts/build_seed.py"
+   },
+   "dependencies": {
++    "@anthropic-ai/sdk": "^1.14.0",
+     "@supabase/ssr": "^0.12.7",
+     "@supabase/supabase-js": "^2.119.2",
+     "next": "16.4.6",
+@@ -27,4 +28,4 @@
+     "eslint-config-next": "16.4.6",
+     "typescript": "^5"
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/src/app/(app)/aggregate/actions.ts b/src/app/(app)/aggregate/actions.ts
+new file mode 100644
+index 0000000..248ef46
+--- /dev/null
++++ b/src/app/(app)/aggregate/actions.ts
+@@ -0,0 +1,36 @@
++"use server";
++
++import { revalidatePath } from "next/cache";
++import { redirect } from "next/navigation";
++import { createClient } from "@/lib/supabase/server";
++import { askAggregate, asksInLastDay, DAILY_LIMIT, notesOverview } from "@/lib/aggregate";
++
++export type AskState = { error?: string; askedAt?: number };
++
++export async function ask(_: AskState, form: FormData): Promise<AskState> {
++  const supabase = await createClient();
++  const { data: auth } = await supabase.auth.getUser();
++  if (!auth.user) redirect("/login");
++  const question = String(form.get("question") ?? "").trim();
++  if (question.length < 3) return { error: "Type a question first." };
++  if (question.length > 500) return { error: "Please keep your question under 500 characters." };
++
++  if ((await asksInLastDay(supabase)) >= DAILY_LIMIT) return { error: `You've reached today's limit of ${DAILY_LIMIT} questions. Try again tomorrow.` };
++
++  const overview = await notesOverview(supabase);
++  if (!overview.answered) return { error: "Answer a few reflections in My Study Notes first." };
++  const { data: profile } = await supabase.from("profiles").select("display_name").eq("id", auth.user.id).maybeSingle();
++
++  const result = await askAggregate(supabase, question, profile?.display_name ?? "", overview);
++  if ("error" in result) return { error: result.error };
++  const { error } = await supabase.from("aggregate_asks").insert({ question, answer: result.answer, cited_days: result.cited });
++  if (error) return { error: "Your answer couldn't be saved. Please try again." };
++  revalidatePath("/aggregate");
++  return { askedAt: Date.now() };
++}
++
++export async function deleteAsk(id: string) {
++  const supabase = await createClient();
++  await supabase.from("aggregate_asks").delete().eq("id", id);
++  revalidatePath("/aggregate");
++}
+diff --git a/src/app/(app)/aggregate/page.tsx b/src/app/(app)/aggregate/page.tsx
+new file mode 100644
+index 0000000..9165334
+--- /dev/null
++++ b/src/app/(app)/aggregate/page.tsx
+@@ -0,0 +1,72 @@
++import Link from "next/link";
++import { requireMember } from "@/lib/data";
++import { asksInLastDay, DAILY_LIMIT, FEW_NOTES, notesOverview } from "@/lib/aggregate";
++import { anthropicKey } from "@/lib/supabase/env";
++import AskForm from "@/components/aggregate/AskForm";
++import AskItem, { type Ask } from "@/components/aggregate/AskItem";
++
++export const metadata = { title: "Study Aggregate · ScriptureIQ" };
++// Answers can take a little while: Claude searches your notes a few times before writing.
++export const maxDuration = 60;
++
++export default async function AggregatePage() {
++  const { supabase } = await requireMember();
++  const [overview, { data: asks }, count] = await Promise.all([
++    notesOverview(supabase),
++    supabase.from("aggregate_asks").select("id, question, answer, cited_days, created_at").order("created_at", { ascending: false }).limit(30),
++    asksInLastDay(supabase),
++  ]);
++  const configured = Boolean(anthropicKey());
++  const remaining = Math.max(0, DAILY_LIMIT - count);
++  const list = (asks ?? []) as Ask[];
++
++  return (
++    <>
++      <h1>Study Aggregate</h1>
++      <p className="muted">Ask about your own study notes. Answers are drafted in your voice from what you&rsquo;ve written, with links to the days they came from.</p>
++
++      <div className="disclosure">
++        <span className="tag">Early version</span>
++        <p>
++          Study Aggregate only knows what you&rsquo;ve written in My Study Notes. With few notes, answers will be brief or
++          general; they become more personal as your notes build up.
++        </p>
++      </div>
++
++      <div className="card stats">
++        <div><strong>{overview.answered}</strong><span className="muted small">reflections answered</span></div>
++        <div><strong>{overview.days}</strong><span className="muted small">days with notes</span></div>
++        <div><strong>{overview.books ? overview.books.split(", ").length : 0}</strong><span className="muted small">books</span></div>
++      </div>
++
++      {!configured ? (
++        <div className="card">
++          <h3>Not switched on yet</h3>
++          <p className="muted">Study Aggregate needs an Anthropic API key before it can answer. Everything else in ScriptureIQ works without it.</p>
++        </div>
++      ) : overview.answered === 0 ? (
++        <div className="card">
++          <h3>Nothing to draw from yet</h3>
++          <p className="muted">Answer a few reflection questions in My Study Notes, then come back and ask what you&rsquo;ve been learning.</p>
++          <Link className="btn" href="/today">Go to today&rsquo;s reading</Link>
++        </div>
++      ) : overview.answered < FEW_NOTES ? (
++        <p className="hint">You&rsquo;ve answered {overview.answered} reflection{overview.answered === 1 ? "" : "s"} so far, so answers will be limited.</p>
++      ) : null}
++
++      <AskForm disabled={!configured || overview.answered === 0 || remaining === 0} remaining={remaining} />
++
++      {list.length > 0 && (
++        <>
++          <h2 className="section">Your past questions</h2>
++          {list.map((a, i) => <AskItem key={a.id} a={a} open={i === 0} />)}
++        </>
++      )}
++
++      <p className="muted small footnote">
++        When you ask, your question and the notes it needs are sent to Anthropic&rsquo;s Claude to write the answer. Your
++        questions and answers are saved privately to your account; delete any of them at any time.
++      </p>
++    </>
++  );
++}
+diff --git a/src/app/globals.css b/src/app/globals.css
+index 5873034..f54fe83 100644
+--- a/src/app/globals.css
++++ b/src/app/globals.css
+@@ -115,3 +115,22 @@ label { display: block; font-weight: 600; margin-bottom: .3rem; font-size: .92re
+ .startgroup > summary::-webkit-details-marker { display: none; }
+ .startgroup[open] > summary { margin-bottom: .5rem; }
+ .tag.shared { background: #e5f4e4; color: var(--ok); }
++/* Study Aggregate */
++.disclosure { display: flex; gap: .7rem; align-items: flex-start; background: var(--brand-soft); border: 1px dashed var(--brand); border-radius: var(--radius); padding: .75rem .9rem; margin-bottom: 1rem; }
++.disclosure p { margin: 0; font-size: .9rem; }
++.disclosure .tag { background: var(--surface); flex-shrink: 0; margin-top: .1rem; }
++.stats { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; gap: .5rem; }
++.stats div { display: flex; flex-direction: column; }
++.stats strong { font-size: 1.5rem; color: var(--brand); }
++.hint { color: var(--accent); font-size: .9rem; }
++.asklabel { display: block; font-weight: 600; margin-bottom: .4rem; }
++.chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: .6rem 0; }
++.chip { font: inherit; font-size: .8rem; padding: .3rem .7rem; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
++.chip:disabled { opacity: .5; cursor: default; }
++.askitem summary { display: flex; justify-content: space-between; gap: .75rem; cursor: pointer; font-weight: 600; list-style: none; }
++.askitem summary::-webkit-details-marker { display: none; }
++.askitem .voice { margin: .6rem 0 .2rem; font-style: italic; }
++.cite { display: inline-block; font-size: .75rem; font-weight: 600; padding: 0 .45rem; border-radius: 999px; background: var(--brand-soft); color: var(--brand); text-decoration: none; vertical-align: .1em; }
++.section { font-size: 1.1rem; margin: 1.5rem 0 .6rem; }
++.footnote { margin-top: 1.5rem; }
++@media (max-width: 480px) { .nav a { font-size: .72rem; } }
+diff --git a/src/components/Nav.tsx b/src/components/Nav.tsx
+index d6c3e3f..4adb6a9 100644
+--- a/src/components/Nav.tsx
++++ b/src/components/Nav.tsx
+@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
+ const ITEMS = [
+   { href: "/today", label: "Today", match: ["/today", "/day"] },
+   { href: "/notes", label: "Study Notes", match: ["/notes"] },
++  { href: "/aggregate", label: "Aggregate", match: ["/aggregate"] },
+   { href: "/groups", label: "Talk It Over", match: ["/groups", "/join"] },
+   { href: "/calendar", label: "Calendar", match: ["/calendar"] },
+   { href: "/settings", label: "Settings", match: ["/settings"] },
+diff --git a/src/components/aggregate/AskForm.tsx b/src/components/aggregate/AskForm.tsx
+new file mode 100644
+index 0000000..f8595bc
+--- /dev/null
++++ b/src/components/aggregate/AskForm.tsx
+@@ -0,0 +1,47 @@
++"use client";
++
++import { useActionState, useRef, useState } from "react";
++import { ask, type AskState } from "@/app/(app)/aggregate/actions";
++
++const SUGGESTIONS = [
++  "What themes keep coming up in my notes?",
++  "What have I learned about God's mercy so far?",
++  "How have I been applying what I read?",
++  "Summarize what I wrote this week.",
++];
++
++export default function AskForm({ disabled, remaining }: { disabled: boolean; remaining: number }) {
++  const [state, action, pending] = useActionState<AskState, FormData>(ask, {});
++  const [text, setText] = useState("");
++  const [lastAsked, setLastAsked] = useState<number | undefined>(undefined);
++  const box = useRef<HTMLTextAreaElement>(null);
++  // Clear the box once a question has been answered and saved.
++  if (state.askedAt && state.askedAt !== lastAsked) {
++    setLastAsked(state.askedAt);
++    setText("");
++  }
++  const off = disabled || pending;
++  return (
++    <form action={action} className="card askform">
++      <label htmlFor="question" className="asklabel">Ask about your notes</label>
++      <textarea
++        id="question" name="question" ref={box} rows={3} maxLength={500} value={text} disabled={off}
++        placeholder="e.g. What have I been learning about faith?"
++        onChange={(e) => setText(e.target.value)}
++        style={{ overflow: "auto" }}
++      />
++      <div className="chips">
++        {SUGGESTIONS.map((s) => (
++          <button key={s} type="button" className="chip" disabled={off} onClick={() => { setText(s); box.current?.focus(); }}>
++            {s}
++          </button>
++        ))}
++      </div>
++      {state.error && <p className="error">{state.error}</p>}
++      <div className="row spread">
++        <span className="muted small">{remaining} questions left today</span>
++        <button className="btn" disabled={off || text.trim().length < 3}>{pending ? "Reading your notes…" : "Ask"}</button>
++      </div>
++    </form>
++  );
++}
+diff --git a/src/components/aggregate/AskItem.tsx b/src/components/aggregate/AskItem.tsx
+new file mode 100644
+index 0000000..d0c7ba0
+--- /dev/null
++++ b/src/components/aggregate/AskItem.tsx
+@@ -0,0 +1,30 @@
++import Link from "next/link";
++import { answerParts } from "@/lib/aggregate-cite";
++import { deleteAsk } from "@/app/(app)/aggregate/actions";
++import ConfirmButton from "@/components/talk/ConfirmButton";
++
++export type Ask = { id: string; question: string; answer: string; cited_days: number[]; created_at: string };
++
++export default function AskItem({ a, open }: { a: Ask; open: boolean }) {
++  const when = new Date(a.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
++  return (
++    <details className="card askitem" open={open}>
++      <summary>
++        <span className="q">{a.question}</span>
++        <span className="muted small">{when}</span>
++      </summary>
++      <p className="voice muted small">Drafted in your voice from your notes</p>
++      {a.answer.split(/\n{2,}/).map((para, i) => (
++        <p key={i}>
++          {answerParts(para).map((p, j) =>
++            "day" in p ? <Link key={j} className="cite" href={`/notes/${p.day}`}>Day {p.day}</Link> : <span key={j}>{p.text}</span>,
++          )}
++        </p>
++      ))}
++      <div className="row spread">
++        <span className="muted small">{a.cited_days.length ? `From ${a.cited_days.length} day${a.cited_days.length > 1 ? "s" : ""} of notes` : "No notes cited"}</span>
++        <ConfirmButton action={deleteAsk.bind(null, a.id)} className="btn ghost small" message="Delete this question and answer?">Delete</ConfirmButton>
++      </div>
++    </details>
++  );
++}
+diff --git a/src/lib/aggregate-cite.ts b/src/lib/aggregate-cite.ts
+new file mode 100644
+index 0000000..e726524
+--- /dev/null
++++ b/src/lib/aggregate-cite.ts
+@@ -0,0 +1,24 @@
++/** Days cited as [Day 12] in a Study Aggregate answer, in order, without repeats. */
++export function citedDays(text: string): number[] {
++  const out: number[] = [];
++  for (const m of text.matchAll(/\[Day (\d{1,3})\]/g)) {
++    const d = Number(m[1]);
++    if (d >= 1 && d <= 358 && !out.includes(d)) out.push(d);
++  }
++  return out;
++}
++
++/** Splits an answer into text and day links, for rendering "[Day 12]" as a link to that day's notes. */
++export function answerParts(text: string): ({ text: string } | { day: number })[] {
++  const parts: ({ text: string } | { day: number })[] = [];
++  let last = 0;
++  for (const m of text.matchAll(/\[Day (\d{1,3})\]/g)) {
++    const d = Number(m[1]);
++    if (d < 1 || d > 358) continue;
++    if (m.index! > last) parts.push({ text: text.slice(last, m.index) });
++    parts.push({ day: d });
++    last = m.index! + m[0].length;
++  }
++  if (last < text.length) parts.push({ text: text.slice(last) });
++  return parts;
++}
+diff --git a/src/lib/aggregate.ts b/src/lib/aggregate.ts
+new file mode 100644
+index 0000000..46c4c7f
+--- /dev/null
++++ b/src/lib/aggregate.ts
+@@ -0,0 +1,137 @@
++import "server-only";
++import Anthropic from "@anthropic-ai/sdk";
++import type { SupabaseClient } from "@supabase/supabase-js";
++import { aggregateModel, anthropicKey } from "./supabase/env";
++import { citedDays } from "./aggregate-cite";
++
++/** Most questions a member can ask in one day (keeps API cost predictable). */
++export const DAILY_LIMIT = 25;
++/** Below this many answered reflections, the page warns that answers will be thin. */
++export const FEW_NOTES = 10;
++
++export type Overview = { answered: number; days: number; first_day: number | null; last_day: number | null; books: string };
++
++export async function notesOverview(supabase: SupabaseClient): Promise<Overview> {
++  const { data } = await supabase.rpc("my_notes_overview");
++  const row = Array.isArray(data) ? data[0] : data;
++  return row ?? { answered: 0, days: 0, first_day: null, last_day: null, books: "" };
++}
++
++const TOOLS: Anthropic.Tool[] = [
++  {
++    name: "search_notes",
++    description:
++      "Search the member's own answered reflection notes. Any word may match; best matches first. Leave query empty to get the most recent answers. Search several times with different words (synonyms, names, themes) before concluding the notes don't cover something.",
++    input_schema: {
++      type: "object",
++      properties: {
++        query: { type: "string", description: "Words to look for, e.g. 'mercy forgiveness Cain'" },
++        book: { type: "string", description: "Optional Bible book to limit to, e.g. 'Genesis'" },
++        from_day: { type: "integer", description: "Optional first plan day (1-358)" },
++        to_day: { type: "integer", description: "Optional last plan day (1-358)" },
++      },
++    },
++  },
++  {
++    name: "get_day_notes",
++    description: "Get every answered note the member wrote for one plan day, with that day's reading.",
++    input_schema: { type: "object", properties: { day: { type: "integer" } }, required: ["day"] },
++  },
++];
++
++type NoteRow = { day: number; reading: string; kind: string; question: string; answer: string };
++
++function format(rows: NoteRow[]) {
++  if (!rows.length) return "No matching notes.";
++  return rows
++    .map((r) => `[Day ${r.day}] ${r.reading}${r.kind === "own" ? " (member's own question)" : ""}\nQ: ${r.question}\nA: ${r.answer}`)
++    .join("\n\n");
++}
++
++async function runTool(supabase: SupabaseClient, name: string, input: Record<string, unknown>, seen: Set<number>) {
++  const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? Math.round(v) : null);
++  const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim().slice(0, 200) : null);
++  if (name === "search_notes") {
++    const { data, error } = await supabase.rpc("search_my_notes", {
++      p_query: str(input.query), p_book: str(input.book), p_from: num(input.from_day), p_to: num(input.to_day), p_limit: 12,
++    });
++    if (error) return `Search failed: ${error.message}`;
++    (data ?? []).forEach((r: NoteRow) => seen.add(r.day));
++    return format((data ?? []) as NoteRow[]);
++  }
++  if (name === "get_day_notes") {
++    const day = num(input.day);
++    if (!day) return "Give a day number.";
++    const { data, error } = await supabase.rpc("search_my_notes", { p_query: null, p_book: null, p_from: day, p_to: day, p_limit: 25 });
++    if (error) return `Lookup failed: ${error.message}`;
++    (data ?? []).forEach((r: NoteRow) => seen.add(r.day));
++    return format((data ?? []) as NoteRow[]);
++  }
++  return "Unknown tool.";
++}
++
++function system(name: string, o: Overview) {
++  return `You are Study Aggregate in ScriptureIQ, a companion to BibleProject's reading plan "One Story That Leads to Jesus" (358 days, NIV).
++You help ${name || "the member"} look back over their OWN reflection notes. Use the tools to search their notes; they hold nothing else.
++
++What they have written so far: ${o.answered} answered reflections across ${o.days} plan days${o.first_day ? ` (Days ${o.first_day}-${o.last_day}; ${o.books})` : ""}.
++
++How to answer:
++- Write in the member's own voice, first person ("I've noticed...", "What stands out to me..."), as a synthesis of what THEY wrote. Keep their wording, convictions and tone; don't add beliefs, doctrine or conclusions they haven't expressed.
++- Base every point on their notes and cite the day in square brackets right after it, like [Day 12]. Only cite days you actually read.
++- If the notes don't cover the question, or there are only a few notes, say so plainly in one or two sentences, share what little is there, and suggest which kinds of reflections would help. Never fill gaps with outside teaching.
++- Don't quote more than a sentence of Bible text. Keep it under 250 words, in short plain paragraphs (no headings, no bullet lists, no markdown).`;
++}
++
++export type AskResult = { answer: string; cited: number[] } | { error: string };
++
++/** Answers a question by letting Claude search the member's notes (row-level security limits it to their own). */
++export async function askAggregate(supabase: SupabaseClient, question: string, name: string, o: Overview): Promise<AskResult> {
++  const key = anthropicKey();
++  if (!key) return { error: "Study Aggregate isn't switched on yet." };
++  const client = new Anthropic({ apiKey: key });
++  const messages: Anthropic.MessageParam[] = [{ role: "user", content: question }];
++  const seen = new Set<number>(); // days whose notes Claude actually read
++  try {
++    for (let turn = 0; turn < 6; turn++) {
++      const res = await client.messages.create({
++        model: aggregateModel(),
++        max_tokens: 1200,
++        system: system(name, o),
++        tools: TOOLS,
++        tool_choice: turn === 5 ? { type: "none" } : { type: "auto" },
++        messages,
++      });
++      const uses = res.content.filter((b): b is Anthropic.ToolUseBlock => b.type === "tool_use");
++      if (res.stop_reason !== "tool_use" || !uses.length) {
++        const raw = res.content
++          .filter((b): b is Anthropic.TextBlock => b.type === "text")
++          .map((b) => b.text)
++          .join("\n")
++          .trim();
++        // Keep only citations of days Claude actually read, so every link points to real notes.
++        const answer = raw.replace(/ ?\[Day (\d{1,3})\]/g, (m, d) => (seen.has(Number(d)) ? m : "")).trim();
++        return answer ? { answer, cited: citedDays(answer) } : { error: "No answer came back. Please try again." };
++      }
++      messages.push({ role: "assistant", content: res.content as unknown as Anthropic.ContentBlockParam[] });
++      const results: Anthropic.ToolResultBlockParam[] = [];
++      for (const u of uses) {
++        results.push({ type: "tool_result", tool_use_id: u.id, content: await runTool(supabase, u.name, (u.input ?? {}) as Record<string, unknown>, seen) });
++      }
++      messages.push({ role: "user", content: results });
++    }
++    return { error: "That question took too many steps. Try asking something narrower." };
++  } catch (e) {
++    const status = (e as { status?: number }).status;
++    if (status === 401) return { error: "Study Aggregate's API key isn't valid. The app owner needs to update it." };
++    if (status === 429 || status === 529) return { error: "Claude is busy right now. Please try again in a minute." };
++    return { error: "Something went wrong while reading your notes. Please try again." };
++  }
++}
++
++/** Questions this member asked in the last 24 hours (for the daily limit). */
++export async function asksInLastDay(supabase: SupabaseClient) {
++  const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
++  const { count } = await supabase.from("aggregate_asks").select("id", { count: "exact", head: true }).gte("created_at", since);
++  return count ?? 0;
++}
+diff --git a/src/lib/supabase/env.ts b/src/lib/supabase/env.ts
+index a946843..b5641ee 100644
+--- a/src/lib/supabase/env.ts
++++ b/src/lib/supabase/env.ts
+@@ -52,3 +52,13 @@ export function requireSupabaseEnv(): SupabaseEnv {
+ export function siteUrl() {
+   return first(process.env.SITE_URL, process.env.NEXT_PUBLIC_SITE_URL).replace(/\/+$/, "");
+ }
++
++/** Anthropic API key for Study Aggregate (server only). Empty when not set up yet. */
++export function anthropicKey() {
++  return first(process.env.ANTHROPIC_API_KEY);
++}
++
++/** Model for Study Aggregate; can be changed in Vercel without a code change. */
++export function aggregateModel() {
++  return first(process.env.ANTHROPIC_MODEL) || "claude-sonnet-5-5";
++}
+diff --git a/supabase/migrations/0005_study_aggregate.sql b/supabase/migrations/0005_study_aggregate.sql
+new file mode 100644
+index 0000000..f78a39c
+--- /dev/null
++++ b/supabase/migrations/0005_study_aggregate.sql
+@@ -0,0 +1,73 @@
++-- Study Aggregate: lets Claude search a member's OWN answered notes, and keeps that member's past questions.
++-- Every function runs as the signed-in member (security invoker), so row-level security limits it to their notes.
++
++-- What the member has written so far (answered reflections only).
++create or replace function public.my_notes_overview()
++returns table (answered integer, days integer, first_day integer, last_day integer, books text)
++language sql stable security invoker set search_path = '' as $$
++  select count(*)::int,
++         count(distinct e.day)::int,
++         min(e.day)::int,
++         max(e.day)::int,
++         coalesce(string_agg(distinct coalesce(p.book, split_part(p.reading, ' ', 1)), ', '), '')
++  from public.note_items i
++  join public.note_entries e on e.id = i.entry_id
++  join public.plan_days p on p.day = e.day
++  where i.user_id = auth.uid() and btrim(i.answer) <> '';
++$$;
++
++-- Searches the member's answered notes. Any word may match; best matches first.
++-- With no words, returns the most recent answers. Optional book name and day range narrow it.
++create or replace function public.search_my_notes(
++  p_query text default null, p_book text default null,
++  p_from integer default null, p_to integer default null, p_limit integer default 12)
++returns table (day integer, reading text, kind text, question text, answer text, rank real)
++language plpgsql stable security invoker set search_path = '' as $$
++declare
++  q tsquery := null;
++  w text;
++begin
++  foreach w in array regexp_split_to_array(lower(regexp_replace(coalesce(p_query, ''), '[^[:alnum:] ]', ' ', 'g')), '\s+') loop
++    if length(w) > 2 and plainto_tsquery('english', w)::text <> '' then
++      q := case when q is null then plainto_tsquery('english', w) else q || plainto_tsquery('english', w) end;
++    end if;
++  end loop;
++  return query
++    select e.day::int, p.reading, i.kind,
++           concat_ws(' ', i.question, i.question_2), i.answer,
++           case when q is null then 0::real
++                else ts_rank(to_tsvector('english', concat_ws(' ', i.question, i.question_2, i.answer)), q) end
++    from public.note_items i
++    join public.note_entries e on e.id = i.entry_id
++    join public.plan_days p on p.day = e.day
++    where i.user_id = auth.uid()
++      and btrim(i.answer) <> ''
++      and (q is null or to_tsvector('english', concat_ws(' ', i.question, i.question_2, i.answer)) @@ q)
++      and (p_book is null or p.book ilike '%' || p_book || '%' or p.reading ilike '%' || p_book || '%')
++      and (p_from is null or e.day >= p_from)
++      and (p_to is null or e.day <= p_to)
++    order by 6 desc, i.updated_at desc
++    limit least(greatest(coalesce(p_limit, 12), 1), 25);
++end $$;
++
++-- The member's past Study Aggregate questions and answers (private).
++create table if not exists public.aggregate_asks (
++  id         uuid primary key default gen_random_uuid(),
++  user_id    uuid not null references auth.users (id) on delete cascade default auth.uid(),
++  question   text not null check (length(question) between 1 and 500),
++  answer     text not null,
++  cited_days integer[] not null default '{}',
++  created_at timestamptz not null default now()
++);
++create index if not exists aggregate_asks_user on public.aggregate_asks (user_id, created_at desc);
++alter table public.aggregate_asks enable row level security;
++drop policy if exists "own asks" on public.aggregate_asks;
++create policy "own asks" on public.aggregate_asks for all to authenticated
++  using (user_id = auth.uid()) with check (user_id = auth.uid());
++
++grant select, insert, delete on public.aggregate_asks to authenticated;
++revoke all on public.aggregate_asks from anon;
++grant execute on function public.my_notes_overview() to authenticated;
++grant execute on function public.search_my_notes(text, text, integer, integer, integer) to authenticated;
++revoke execute on function public.my_notes_overview() from anon, public;
++revoke execute on function public.search_my_notes(text, text, integer, integer, integer) from anon, public;
+diff --git a/tests/aggregate.test.ts b/tests/aggregate.test.ts
+new file mode 100644
+index 0000000..48728dc
+--- /dev/null
++++ b/tests/aggregate.test.ts
+@@ -0,0 +1,13 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { citedDays } from "../src/lib/aggregate-cite.ts";
++
++test("citedDays finds [Day n] in order without repeats or out-of-range days", () => {
++  assert.deepEqual(citedDays("Mercy [Day 2] and faith [Day 5], again [Day 2]; bad [Day 400]"), [2, 5]);
++  assert.deepEqual(citedDays("No citations"), []);
++});
++
++test("answerParts turns citations into day links", async () => {
++  const { answerParts } = await import("../src/lib/aggregate-cite.ts");
++  assert.deepEqual(answerParts("I saw mercy [Day 2]."), [{ text: "I saw mercy " }, { day: 2 }, { text: "." }]);
++});
