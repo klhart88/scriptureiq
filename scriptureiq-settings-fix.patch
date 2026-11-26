@@ -1,0 +1,181 @@
+From 68b7369ef0253afaa6d96c5038c2536e2b083f9b Mon Sep 17 00:00:00 2001
+From: ScriptureIQ <noreply@anthropic.com>
+Date: Thu, 26 Nov 2026 00:59:30 +0000
+Subject: [PATCH] Read Supabase settings without NEXT_PUBLIC_ prefix; refuse
+ secret keys; clear setup message
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01DM9YvrsAtq6nK3WdUq25KW
+---
+ README.md                  |  2 +-
+ src/app/login/actions.ts   |  3 ++-
+ src/lib/supabase/client.ts |  8 ------
+ src/lib/supabase/env.ts    | 54 ++++++++++++++++++++++++++++++++++++++
+ src/lib/supabase/server.ts |  6 +++--
+ src/proxy.ts               | 14 ++++++++--
+ 6 files changed, 73 insertions(+), 14 deletions(-)
+ delete mode 100644 src/lib/supabase/client.ts
+ create mode 100644 src/lib/supabase/env.ts
+
+diff --git a/README.md b/README.md
+index b810449..0206b94 100644
+--- a/README.md
++++ b/README.md
+@@ -26,7 +26,7 @@ This first build covers the private reading-and-notes side of the design:
+    - `supabase/seed.sql` (loads all 358 plan days with their pre-reads and approved questions)
+ 
+    In *Authentication → URL Configuration*, set the Site URL to your app's address and add `https://YOUR-DOMAIN/auth/confirm` (and `http://localhost:3000/auth/confirm`) to the redirect URLs.
+-2. **Environment.** Copy `.env.example` to `.env.local` and fill in the Supabase URL and publishable key.
++2. **Environment.** Copy `.env.example` to `.env.local` and fill in `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` (publishable or anon key — never the secret key) and `SITE_URL`. No `NEXT_PUBLIC_` prefix is needed: the app only talks to Supabase from the server.
+ 3. **Run locally.** `npm install`, then `npm run dev`, and open http://localhost:3000.
+ 4. **Deploy.** Import the repository in Vercel and add the same environment variables there.
+ 5. **NIV text (when ready).** Register at platform.youversion.com, accept the NIV licence for your app key, and set `YOUVERSION_APP_KEY`. Until then, each passage shows *Read on Bible.com* and *Mark as read*, so the tracker still works.
+diff --git a/src/app/login/actions.ts b/src/app/login/actions.ts
+index 499e072..d047f6f 100644
+--- a/src/app/login/actions.ts
++++ b/src/app/login/actions.ts
+@@ -3,6 +3,7 @@
+ import { headers } from "next/headers";
+ import { redirect } from "next/navigation";
+ import { createClient } from "@/lib/supabase/server";
++import { siteUrl } from "@/lib/supabase/env";
+ 
+ export type AuthState = { error?: string; notice?: string };
+ 
+@@ -23,7 +24,7 @@ export async function signIn(_: AuthState, form: FormData): Promise<AuthState> {
+ 
+ export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
+   const supabase = await createClient();
+-  const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
++  const origin = siteUrl() || ((await headers()).get("origin") ?? "");
+   const password = String(form.get("password") ?? "");
+   if (password.length < 8) return { error: "Use a password of at least 8 characters." };
+   const { data, error } = await supabase.auth.signUp({
+diff --git a/src/lib/supabase/client.ts b/src/lib/supabase/client.ts
+deleted file mode 100644
+index e50bdf6..0000000
+--- a/src/lib/supabase/client.ts
++++ /dev/null
+@@ -1,8 +0,0 @@
+-import { createBrowserClient } from "@supabase/ssr";
+-
+-export function createClient() {
+-  return createBrowserClient(
+-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+-  );
+-}
+diff --git a/src/lib/supabase/env.ts b/src/lib/supabase/env.ts
+new file mode 100644
+index 0000000..a946843
+--- /dev/null
++++ b/src/lib/supabase/env.ts
+@@ -0,0 +1,54 @@
++/**
++ * Supabase settings, read on the server only. Accepts the plain names (preferred) or the older
++ * NEXT_PUBLIC_ names. Refuses a secret / service-role key: that key bypasses row-level security,
++ * which would let one member read another's notes.
++ */
++export type SupabaseEnv = { url: string; key: string };
++
++// Each name is written out in full: the proxy can only see settings referenced directly.
++function first(...values: (string | undefined)[]) {
++  for (const raw of values) {
++    const v = raw?.trim().replace(/^["']|["']$/g, "");
++    if (v) return v;
++  }
++  return "";
++}
++
++function isSecretKey(key: string) {
++  if (key.startsWith("sb_secret_")) return true;
++  const parts = key.split(".");
++  if (parts.length !== 3) return false;
++  try {
++    const payload = JSON.parse(Buffer.from(parts[1].replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8"));
++    return payload?.role === "service_role";
++  } catch {
++    return false;
++  }
++}
++
++export function supabaseEnv(): SupabaseEnv | { error: string } {
++  const url = first(process.env.SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_URL).replace(/\/+$/, "");
++  const key = first(
++    process.env.SUPABASE_PUBLISHABLE_KEY,
++    process.env.SUPABASE_ANON_KEY,
++    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
++    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
++  );
++  if (!url) return { error: "SUPABASE_URL is not set." };
++  if (!/^https?:\/\//.test(url)) return { error: "SUPABASE_URL must start with https://" };
++  if (!key) return { error: "SUPABASE_PUBLISHABLE_KEY is not set." };
++  if (isSecretKey(key)) {
++    return { error: "SUPABASE_PUBLISHABLE_KEY holds a secret (service_role) key. Use the publishable or anon public key instead." };
++  }
++  return { url, key };
++}
++
++export function requireSupabaseEnv(): SupabaseEnv {
++  const env = supabaseEnv();
++  if ("error" in env) throw new Error(`ScriptureIQ setup: ${env.error}`);
++  return env;
++}
++
++export function siteUrl() {
++  return first(process.env.SITE_URL, process.env.NEXT_PUBLIC_SITE_URL).replace(/\/+$/, "");
++}
+diff --git a/src/lib/supabase/server.ts b/src/lib/supabase/server.ts
+index dae2aa9..895f9bb 100644
+--- a/src/lib/supabase/server.ts
++++ b/src/lib/supabase/server.ts
+@@ -1,11 +1,13 @@
+ import { createServerClient } from "@supabase/ssr";
+ import { cookies } from "next/headers";
++import { requireSupabaseEnv } from "./env";
+ 
+ export async function createClient() {
+   const cookieStore = await cookies();
++  const { url, key } = requireSupabaseEnv();
+   return createServerClient(
+-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
++    url,
++    key,
+     {
+       cookies: {
+         getAll() {
+diff --git a/src/proxy.ts b/src/proxy.ts
+index 97e6736..fa58909 100644
+--- a/src/proxy.ts
++++ b/src/proxy.ts
+@@ -1,14 +1,24 @@
+ import { createServerClient } from "@supabase/ssr";
+ import { NextResponse, type NextRequest } from "next/server";
++import { supabaseEnv } from "@/lib/supabase/env";
+ 
+ const PUBLIC_PATHS = ["/login", "/auth"];
+ 
+ /** Refreshes the Supabase session cookie on every request and sends signed-out visitors to /login. */
+ export async function proxy(request: NextRequest) {
++  const env = supabaseEnv();
++  if ("error" in env) {
++    // Say plainly what is missing instead of a bare "Internal Server Error".
++    return new NextResponse(`ScriptureIQ is not configured yet.\n\n${env.error}\n\nAdd it in Vercel → Settings → Environment Variables, then redeploy.`, {
++      status: 503,
++      headers: { "content-type": "text/plain; charset=utf-8" },
++    });
++  }
++
+   let response = NextResponse.next({ request });
+   const supabase = createServerClient(
+-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
++    env.url,
++    env.key,
+     {
+       cookies: {
+         getAll() {
+-- 
+2.43.0
+
