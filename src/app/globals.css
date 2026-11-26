@@ -114,3 +114,4 @@ label { display: block; font-weight: 600; margin-bottom: .3rem; font-size: .92re
 .startgroup > summary { list-style: none; padding-left: 0; }
 .startgroup > summary::-webkit-details-marker { display: none; }
 .startgroup[open] > summary { margin-bottom: .5rem; }
+.tag.shared { background: #e5f4e4; color: var(--ok); }

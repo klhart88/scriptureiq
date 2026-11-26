@@ -13,7 +13,7 @@ export default async function NoteEntryPage({ params }: { params: Promise<{ day:
   const { data: entryId, error } = await supabase.rpc("open_note_entry", { p_day: day });
   if (error || !entryId) throw new Error(error?.message ?? "Could not open this day's notes");
   const { data: items } = await supabase.from("note_items")
-    .select("id, kind, source_key, question, question_2, answer, position, updated_at")
+    .select("id, kind, source_key, question, question_2, answer, position, updated_at, last_shared_at, last_shared_group")
     .eq("entry_id", entryId).order("position");
 
   return (

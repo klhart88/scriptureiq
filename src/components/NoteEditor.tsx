@@ -7,6 +7,7 @@ import { addQuestion, deleteItem, reorderItems, saveAnswer } from "@/app/(app)/n
 export type NoteItem = {
   id: string; kind: "generated" | "own"; source_key: string | null;
   question: string; question_2: string | null; answer: string; position: number;
+  last_shared_at?: string | null; last_shared_group?: string | null;
 };
 
 const LABEL: Record<string, string> = { q1: "Observe", q2: "Connect", q3: "Respond" };
@@ -102,7 +103,14 @@ export default function NoteEditor({ day, entryId, items: initial }: { day: numb
             {it.question_2 && <span className="q2line">{it.question_2}</span>}
           </p>
           <Answer item={it} entryId={entryId} />
-          <Link className="btn ghost small" href={`/notes/${day}/share?item=${it.id}`}>Share a copy</Link>
+          {it.last_shared_at ? (
+            <div className="row small">
+              <span className="tag shared">✓ Shared{it.last_shared_group ? ` with ${it.last_shared_group}` : ""} · {new Date(it.last_shared_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+              <Link className="btn ghost small" href={`/notes/${day}/share?item=${it.id}`}>Share again</Link>
+            </div>
+          ) : (
+            <Link className="btn ghost small" href={`/notes/${day}/share?item=${it.id}`}>Share a copy</Link>
+          )}
         </div>
       ))}
 

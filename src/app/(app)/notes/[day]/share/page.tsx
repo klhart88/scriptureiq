@@ -34,7 +34,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
           <Link className="btn" href="/groups">Start or join a group</Link>
         </div>
       ) : (
-        <ShareForm day={day} groups={groups.map((g) => ({ id: g.id, name: g.name }))} draft={draft} />
+        <ShareForm day={day} itemId={itemId} groups={groups.map((g) => ({ id: g.id, name: g.name }))} draft={draft} />
       )}
     </article>
   );

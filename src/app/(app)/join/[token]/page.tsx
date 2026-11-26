@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { joinGroup } from "@/app/(app)/groups/actions";
 import { requireMember } from "@/lib/data";
 
 export default async function JoinPage({ params, searchParams }: { params: Promise<{ token: string }>; searchParams: Promise<{ error?: string }> }) {
@@ -33,7 +32,7 @@ export default async function JoinPage({ params, searchParams }: { params: Promi
       <h1>Join {g.name}?</h1>
       <p className="muted">{g.member_count} member{g.member_count === 1 ? "" : "s"}. Members can see your name and the posts you write in this group. Your notes stay private.</p>
       {failed && <p className="error">That didn&rsquo;t work. The link may have just changed; ask for a new one.</p>}
-      <form action={joinGroup.bind(null, token)}>
+      <form method="post" action={`/join/${token}/accept`}>
         <button className="btn">Join group</button>
       </form>
     </article>

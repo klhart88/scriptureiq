@@ -24,13 +24,6 @@ export async function createGroup(_: FormState, form: FormData): Promise<FormSta
   redirect(`/groups/${data.id}?created=1`);
 }
 
-export async function joinGroup(token: string) {
-  const { supabase } = await member();
-  const { data, error } = await supabase.rpc("join_group", { p_token: token });
-  if (error || !data) redirect(`/join/${token}?error=1`);
-  redirect(`/groups/${data}`);
-}
-
 export async function renameGroup(groupId: string, _: FormState, form: FormData): Promise<FormState> {
   const name = String(form.get("name") ?? "").trim();
   if (name.length < 2 || name.length > 80) return { error: "Use 2–80 characters." };
@@ -77,6 +70,13 @@ export async function createPost(groupId: string, day: number, _: FormState, for
   if (error) return { error: /row-level security/i.test(error.message) ? "You're no longer a member of this group." : error.message };
   revalidatePath(`/groups/${groupId}/day/${day}`);
   revalidatePath(`/groups/${groupId}`);
+  // Share a copy: mark the private note answer as shared (on the note only; the post holds no link back).
+  const itemId = form.get("item");
+  if (typeof itemId === "string" && itemId) {
+    const { data: g } = await supabase.from("groups").select("name").eq("id", groupId).maybeSingle();
+    await supabase.from("note_items").update({ last_shared_at: new Date().toISOString(), last_shared_group: g?.name ?? null }).eq("id", itemId);
+    revalidatePath(`/notes/${day}`);
+  }
   if (form.get("redirect")) redirect(`/groups/${groupId}/day/${day}?shared=1`);
   return { notice: "Posted." };
 }

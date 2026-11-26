@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { createPost, type FormState } from "@/app/(app)/groups/actions";
 
-export default function ShareForm({ day, groups, draft }: { day: number; groups: { id: string; name: string }[]; draft: string }) {
+export default function ShareForm({ day, itemId, groups, draft }: { day: number; itemId: string; groups: { id: string; name: string }[]; draft: string }) {
   const [groupId, setGroupId] = useState(groups[0].id);
   const [state, action, pending] = useActionState<FormState, FormData>(
     (prev: FormState, form: FormData) => createPost(groupId, day, prev, form),
@@ -12,6 +12,7 @@ export default function ShareForm({ day, groups, draft }: { day: number; groups:
   return (
     <form action={action} className="card">
       <input type="hidden" name="redirect" value="1" />
+      <input type="hidden" name="item" value={itemId} />
       {groups.length > 1 && (
         <div className="field">
           <label htmlFor="share-group">Group</label>

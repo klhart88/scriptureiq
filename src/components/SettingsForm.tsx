@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { saveSettings, type SettingsState } from "@/app/(app)/settings/actions";
 
 function localToday() {
@@ -10,9 +10,9 @@ function localToday() {
 
 export default function SettingsForm({ displayName, startDate, welcome }: { displayName: string; startDate: string | null; welcome: boolean }) {
   const [state, action, pending] = useActionState<SettingsState, FormData>(saveSettings, {});
-  const [start] = useState(startDate ?? localToday());
   return (
-    <form action={action} className="card">
+    // Keyed by the saved values: after a save the form remounts showing what was stored, not the old default.
+    <form key={`${displayName}|${startDate}`} action={action} className="card">
       {welcome && <input type="hidden" name="welcome" value="1" />}
       <div className="field">
         <label htmlFor="display_name">Your name</label>
@@ -20,7 +20,7 @@ export default function SettingsForm({ displayName, startDate, welcome }: { disp
       </div>
       <div className="field">
         <label htmlFor="start_date">Plan start date (Day 1)</label>
-        <input id="start_date" name="start_date" type="date" defaultValue={start} required />
+        <input id="start_date" name="start_date" type="date" defaultValue={startDate ?? localToday()} required suppressHydrationWarning />
         <p className="small muted">Changing this moves which day counts as today. Your notes and progress stay with their plan day.</p>
       </div>
       {state.error && <p className="error">{state.error}</p>}

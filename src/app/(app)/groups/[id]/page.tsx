@@ -9,9 +9,11 @@ import { requireMember } from "@/lib/data";
 import { inviteUrl, memberNames, timeAgo, type Group } from "@/lib/groups";
 import { siteUrl } from "@/lib/supabase/env";
 
-export default async function GroupPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
+export default async function GroupPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string; joined?: string }> }) {
   const { id } = await params;
-  const created = Boolean((await searchParams).created);
+  const sp = await searchParams;
+  const created = Boolean(sp.created);
+  const joined = Boolean(sp.joined);
   const { supabase, user, profile } = await requireMember();
   const { data: g } = await supabase.from("groups").select("id, name, owner_id, invite_token, created_at").eq("id", id).maybeSingle();
   if (!g) notFound();
@@ -29,6 +31,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
     <article>
       <div className="eyebrow"><Link href="/groups">Talk It Over</Link></div>
       <h1>{group.name}</h1>
+      {joined && <p className="notice">Welcome to {group.name}! Open today&rsquo;s thread to join the conversation.</p>}
       {created && <p className="notice">Group created. Copy the invite link below and send it to the people you&rsquo;d like to join.</p>}
 
       <section className="card">
