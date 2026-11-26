@@ -109,3 +109,8 @@ label { display: block; font-weight: 600; margin-bottom: .3rem; font-size: .92re
 .questions li { margin-bottom: .5rem; }
 .members li { display: flex; justify-content: space-between; align-items: center; padding: .45rem 0; border-bottom: 1px solid var(--line); }
 .members li:last-child { border-bottom: 0; }
+.groupcard h3 a { color: var(--ink); text-decoration: none; }
+.startgroup { margin: .5rem 0 1rem; }
+.startgroup > summary { list-style: none; padding-left: 0; }
+.startgroup > summary::-webkit-details-marker { display: none; }
+.startgroup[open] > summary { margin-bottom: .5rem; }

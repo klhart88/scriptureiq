@@ -5,7 +5,9 @@
 export type VoicePrefs = { voiceURI: string | null; rate: number };
 
 const KEY = "siq.voice";
-const NATURAL = /(natural|neural|premium|enhanced|siri|online|wavenet|studio)/i;
+// Free, good-quality voices: Google (Chrome), Microsoft "Natural"/"Online" (Edge), and Apple
+// "Enhanced"/"Premium" voices once downloaded on a Mac or iPhone. Everything else sounds robotic.
+const NATURAL = /(google|natural|neural|premium|enhanced|online|wavenet|studio)/i;
 const GOOD = /(google|samantha|ava|allison|zoe|evan|nathan|serena|daniel|karen|moira|aria|jenny|guy|libby|sonia)/i;
 
 export function loadVoicePrefs(): VoicePrefs {
@@ -30,7 +32,7 @@ export function voiceScore(v: SpeechSynthesisVoice) {
   if (GOOD.test(v.name)) s += 4;
   if (/^en[-_]US/i.test(v.lang)) s += 2;
   else if (/^en/i.test(v.lang)) s += 1;
-  if (/(compact|espeak|robot|novelty|whisper|bells|zarvox|trinoids|albert|bad news|good news|bahh|bubbles|cellos|jester|organ|superstar|wobble)/i.test(v.name)) s -= 20;
+  if (/(compact|espeak|robot|novelty|whisper|bells|boing|zarvox|trinoids|albert|bad news|good news|bahh|bubbles|cellos|jester|organ|superstar|wobble|deranged|hysterical|pipe organ)/i.test(v.name)) s -= 20;
   return s;
 }
 
@@ -38,10 +40,20 @@ export function englishVoices(all: SpeechSynthesisVoice[]) {
   return all.filter((v) => /^en/i.test(v.lang)).sort((a, b) => voiceScore(b) - voiceScore(a) || a.name.localeCompare(b.name));
 }
 
+/**
+ * The voices worth offering: the natural-sounding ones. If a device has none, the three best of what
+ * it does have, so read-aloud still works.
+ */
+export function offeredVoices(all: SpeechSynthesisVoice[]) {
+  const en = englishVoices(all);
+  const natural = en.filter(isNatural);
+  return { voices: natural.length ? natural : en.filter((v) => voiceScore(v) > -20).slice(0, 3), allNatural: natural.length > 0 };
+}
+
 /** The saved voice if it's on this device, otherwise the most natural English voice available. */
 export function pickVoice(all: SpeechSynthesisVoice[], prefs: VoicePrefs) {
-  const en = englishVoices(all);
-  return (prefs.voiceURI && all.find((v) => v.voiceURI === prefs.voiceURI)) || en[0] || null;
+  const { voices } = offeredVoices(all);
+  return (prefs.voiceURI && voices.find((v) => v.voiceURI === prefs.voiceURI)) || voices[0] || null;
 }
 
 export function isNatural(v: SpeechSynthesisVoice) {

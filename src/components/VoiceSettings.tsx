@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { englishVoices, isNatural, loadVoicePrefs, pickVoice, saveVoicePrefs, type VoicePrefs } from "@/lib/voice";
+import { englishVoices, loadVoicePrefs, offeredVoices, pickVoice, saveVoicePrefs, type VoicePrefs } from "@/lib/voice";
 
 const SAMPLE = "In the beginning God created the heavens and the earth.";
 const RATES = [0.8, 0.9, 1, 1.1, 1.25];
@@ -37,8 +37,7 @@ export default function VoiceSettings() {
   // Until the device's voices load (always the case on the server), show a placeholder so the page hydrates cleanly.
   if (voices.length === 0) return <section className="card"><h2>Read-aloud voice</h2><p className="muted small">Loading this device&rsquo;s voices…</p></section>;
 
-  const natural = voices.filter(isNatural);
-  const other = voices.filter((v) => !isNatural(v));
+  const { voices: offered, allNatural } = offeredVoices(voices);
   return (
     <section className="card">
       <h2>Read-aloud voice</h2>
@@ -46,17 +45,7 @@ export default function VoiceSettings() {
       <div className="field">
         <label htmlFor="voice">Voice</label>
         <select id="voice" value={current?.voiceURI ?? ""} onChange={(e) => update({ ...prefs, voiceURI: e.target.value || null })}>
-          {voices.length === 0 && <option value="">Loading voices…</option>}
-          {natural.length > 0 && (
-            <optgroup label="Most natural">
-              {natural.map((v) => <option key={v.voiceURI} value={v.voiceURI}>{v.name} ({v.lang})</option>)}
-            </optgroup>
-          )}
-          {other.length > 0 && (
-            <optgroup label={natural.length ? "Other voices" : "Voices"}>
-              {other.map((v) => <option key={v.voiceURI} value={v.voiceURI}>{v.name} ({v.lang})</option>)}
-            </optgroup>
-          )}
+          {offered.map((v) => <option key={v.voiceURI} value={v.voiceURI}>{v.name.replace(/\s*\(.*\)$/, "")} ({v.lang})</option>)}
         </select>
       </div>
       <div className="field">
@@ -66,9 +55,9 @@ export default function VoiceSettings() {
         </select>
       </div>
       <button type="button" className="btn secondary" onClick={preview} disabled={!current}>▶ Preview</button>
-      {natural.length === 0 && voices.length > 0 && (
+      {!allNatural && (
         <p className="small muted" style={{ marginTop: ".75rem", marginBottom: 0 }}>
-          No natural-sounding voices found on this device. On a Mac or iPhone, download one in Settings → Accessibility → Spoken Content → Voices (choose an &ldquo;Enhanced&rdquo; or &ldquo;Premium&rdquo; English voice). On Windows, Microsoft Edge includes &ldquo;Natural&rdquo; voices.
+          This device has no natural-sounding voices yet, so the best available are listed. On a Mac or iPhone, download one in Settings → Accessibility → Spoken Content → Voices (choose an &ldquo;Enhanced&rdquo; or &ldquo;Premium&rdquo; English voice). On a computer, Chrome includes Google voices and Microsoft Edge includes &ldquo;Natural&rdquo; voices.
         </p>
       )}
     </section>
