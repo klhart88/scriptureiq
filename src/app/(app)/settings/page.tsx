@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SettingsForm from "@/components/SettingsForm";
 import { requireMember } from "@/lib/data";
 import { signOut } from "@/app/login/actions";
@@ -13,7 +14,10 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       <section className="card">
         <div className="eyebrow">Signed in as</div>
         <p>{user.email}</p>
-        <form action={signOut}><button className="btn secondary">Sign out</button></form>
+        <div className="row">
+          <Link className="btn secondary" href="/settings/password">Change password</Link>
+          <form action={signOut}><button className="btn ghost">Sign out</button></form>
+        </div>
       </section>
       <section className="card small muted">
         <p>Your notes, reading progress and answers are private to your account. Only posts you write in a group are seen by that group.</p>

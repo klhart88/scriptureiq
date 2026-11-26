@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import DayNav from "@/components/DayNav";
 import Video from "@/components/Video";
 import { getPlanDay, requireMember } from "@/lib/data";
 import { dateForDay, daySegments, formatDate, parseDayParam, TOTAL_DAYS } from "@/lib/plan";
@@ -14,6 +15,7 @@ export default async function BeforeYouRead({ params }: { params: Promise<{ day:
 
   return (
     <article>
+      <DayNav day={day} step="before" />
       <div className="spread">
         <div>
           <div className="eyebrow">
@@ -41,10 +43,6 @@ export default async function BeforeYouRead({ params }: { params: Promise<{ day:
         <Link className="btn block" href={`/day/${day}/read`}>Start reading</Link>
       </section>
 
-      <nav className="spread small" aria-label="Other days">
-        {day > 1 ? <Link href={`/day/${day - 1}`}>← Day {day - 1}</Link> : <span />}
-        {day < TOTAL_DAYS ? <Link href={`/day/${day + 1}`}>Day {day + 1} →</Link> : <span />}
-      </nav>
     </article>
   );
 }

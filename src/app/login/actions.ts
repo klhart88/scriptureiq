@@ -45,3 +45,16 @@ export async function signOut() {
   await supabase.auth.signOut();
   redirect("/login");
 }
+
+/** Sends a password-reset email. Always reports success, so the form can't be used to test which emails have accounts. */
+export async function requestPasswordReset(_: AuthState, form: FormData): Promise<AuthState> {
+  const email = String(form.get("email") ?? "").trim();
+  if (!email) return { error: "Enter the email you signed up with." };
+  const supabase = await createClient();
+  const origin = siteUrl() || ((await headers()).get("origin") ?? "");
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/confirm?next=${encodeURIComponent("/settings/password?reset=1")}`,
+  });
+  if (error && /rate limit/i.test(error.message)) return { error: "Too many emails sent. Please wait a few minutes and try again." };
+  return { notice: "If that email has an account, a reset link is on its way. Open it on this device." };
+}

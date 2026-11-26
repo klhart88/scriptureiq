@@ -86,3 +86,13 @@ label { display: block; font-weight: 600; margin-bottom: .3rem; font-size: .92re
 .tabs a { padding: .4rem .9rem; border-radius: 999px; text-decoration: none; color: var(--muted); border: 1px solid var(--line); }
 .tabs a[aria-current="page"] { background: var(--brand); color: var(--surface); border-color: var(--brand); }
 .saved { font-size: .75rem; color: var(--muted); min-height: 1em; }
+/* Day step bar */
+.daynav { display: flex; align-items: center; gap: .4rem; margin-bottom: 1rem; }
+.daynav .dayarrow { flex: 0 0 2.2rem; height: 2.2rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); text-decoration: none; color: var(--brand); font-size: 1.3rem; line-height: 1; }
+.daynav span.dayarrow { visibility: hidden; }
+.daynav .steps { flex: 1; display: flex; list-style: none; margin: 0; padding: 3px; gap: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; }
+.daynav .steps li { flex: 1; }
+.daynav .steps a { display: flex; align-items: center; justify-content: center; gap: .35rem; padding: .45rem .3rem; border-radius: 999px; text-decoration: none; color: var(--muted); font-size: .85rem; font-weight: 600; white-space: nowrap; }
+.daynav .steps a .num { display: inline-flex; width: 1.2rem; height: 1.2rem; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid currentColor; font-size: .7rem; }
+.daynav .steps a[aria-current="step"] { background: var(--brand); color: var(--surface); }
+@media (max-width: 420px) { .daynav .steps a .num { display: none; } .daynav .steps a { font-size: .78rem; } }

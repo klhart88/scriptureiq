@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import DayNav from "@/components/DayNav";
 import Reader from "@/components/Reader";
 import { bibleComUrl, bibleConfigured, fetchPassage, NIV_COPYRIGHT } from "@/lib/bible";
 import { getPlanDay, requireMember } from "@/lib/data";
@@ -19,7 +20,8 @@ export default async function ReadingPage({ params }: { params: Promise<{ day: s
 
   return (
     <article>
-      <div className="eyebrow"><Link href={`/day/${day}`}>← Day {day}</Link></div>
+      <DayNav day={day} step="reading" />
+      <div className="eyebrow">Day {day}</div>
       <h1>{d.reading} <span className="muted small">· {d.psalm}</span></h1>
       {!bibleConfigured() && (
         <p className="small muted">

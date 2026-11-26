@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import DayNav from "@/components/DayNav";
 import NoteEditor from "@/components/NoteEditor";
 import { getPlanDay, requireMember } from "@/lib/data";
-import { dateForDay, formatDate, parseDayParam, TOTAL_DAYS } from "@/lib/plan";
+import { dateForDay, formatDate, parseDayParam } from "@/lib/plan";
 
 export default async function NoteEntryPage({ params }: { params: Promise<{ day: string }> }) {
   const day = parseDayParam((await params).day);
@@ -17,17 +18,13 @@ export default async function NoteEntryPage({ params }: { params: Promise<{ day:
 
   return (
     <article>
+      <DayNav day={day} step="reflections" />
       <div className="eyebrow">
         <Link href="/notes">My Study Notes</Link> · Day {day}
         {profile.start_date && <> · {formatDate(dateForDay(profile.start_date, day))}</>}
       </div>
       <h1>{d.reading}</h1>
-      <p className="small"><Link href={`/day/${day}/read`}>Jump to this day&rsquo;s reading</Link></p>
       <NoteEditor key={entryId as string} day={day} entryId={entryId as string} items={items ?? []} />
-      <nav className="spread small" aria-label="Other days" style={{ marginTop: "1rem" }}>
-        {day > 1 ? <Link href={`/notes/${day - 1}`}>← Day {day - 1}</Link> : <span />}
-        {day < TOTAL_DAYS ? <Link href={`/notes/${day + 1}`}>Day {day + 1} →</Link> : <span />}
-      </nav>
     </article>
   );
 }
