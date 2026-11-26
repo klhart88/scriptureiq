@@ -30,7 +30,7 @@ p { margin: 0 0 .9rem; }
 .topbar { display: flex; align-items: center; justify-content: space-between; padding: .75rem 1rem; max-width: 720px; margin: 0 auto; }
 .brand { font-weight: 700; color: var(--brand); text-decoration: none; letter-spacing: .01em; }
 .nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--line); display: flex; justify-content: center; z-index: 10; padding-bottom: env(safe-area-inset-bottom); }
-.nav a { flex: 1; max-width: 160px; text-align: center; padding: .65rem .25rem; text-decoration: none; color: var(--muted); font-size: .85rem; }
+.nav a { flex: 1; max-width: 150px; text-align: center; padding: .65rem .15rem; text-decoration: none; color: var(--muted); font-size: .82rem; white-space: nowrap; }
 .nav a[aria-current="page"] { color: var(--brand); font-weight: 600; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1rem; }
 .eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: .72rem; color: var(--muted); font-weight: 600; margin-bottom: .25rem; }
@@ -98,3 +98,14 @@ label { display: block; font-weight: 600; margin-bottom: .3rem; font-size: .92re
 .dayfooter { display: flex; justify-content: space-between; margin-top: 1.25rem; font-size: .95rem; }
 .dayfooter a { padding: .5rem .2rem; }
 @media (max-width: 420px) { .daynav .steps a .num { display: none; } .daynav .steps a { font-size: .78rem; } }
+/* Talk It Over */
+.copylink { display: flex; gap: .4rem; }
+.copylink input { flex: 1; font-size: .85rem; color: var(--muted); }
+.posts { list-style: none; padding: 0; margin: 0 0 1rem; }
+.post { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: .9rem 1rem; margin-bottom: .6rem; }
+.postbody { white-space: pre-wrap; margin: .4rem 0 0; }
+.questions summary { cursor: pointer; font-weight: 600; }
+.questions ol { padding-left: 1.2rem; margin: .6rem 0 0; }
+.questions li { margin-bottom: .5rem; }
+.members li { display: flex; justify-content: space-between; align-items: center; padding: .45rem 0; border-bottom: 1px solid var(--line); }
+.members li:last-child { border-bottom: 0; }

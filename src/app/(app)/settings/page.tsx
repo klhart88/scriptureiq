@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SettingsForm from "@/components/SettingsForm";
+import VoiceSettings from "@/components/VoiceSettings";
 import { requireMember } from "@/lib/data";
 import { signOut } from "@/app/login/actions";
 
@@ -11,6 +12,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       <h1>{welcome ? "Welcome to ScriptureIQ" : "Settings"}</h1>
       {welcome && <p className="muted">Choose the day you begin the plan. Day 1 falls on that date, and each day after follows in order.</p>}
       <SettingsForm displayName={profile.display_name} startDate={profile.start_date} welcome={welcome} />
+      {!welcome && <VoiceSettings />}
       <section className="card">
         <div className="eyebrow">Signed in as</div>
         <p>{user.email}</p>

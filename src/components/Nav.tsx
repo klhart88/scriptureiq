@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 
 const ITEMS = [
   { href: "/today", label: "Today", match: ["/today", "/day"] },
-  { href: "/notes", label: "My Study Notes", match: ["/notes"] },
+  { href: "/notes", label: "Study Notes", match: ["/notes"] },
+  { href: "/groups", label: "Talk It Over", match: ["/groups", "/join"] },
   { href: "/calendar", label: "Calendar", match: ["/calendar"] },
   { href: "/settings", label: "Settings", match: ["/settings"] },
 ];

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { addQuestion, deleteItem, reorderItems, saveAnswer } from "@/app/(app)/notes/actions";
 
@@ -101,6 +102,7 @@ export default function NoteEditor({ day, entryId, items: initial }: { day: numb
             {it.question_2 && <span className="q2line">{it.question_2}</span>}
           </p>
           <Answer item={it} entryId={entryId} />
+          <Link className="btn ghost small" href={`/notes/${day}/share?item=${it.id}`}>Share a copy</Link>
         </div>
       ))}
 

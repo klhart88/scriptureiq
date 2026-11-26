@@ -9,7 +9,7 @@ This first build covers the private reading-and-notes side of the design:
 | **Today** — Before you read (pre-read, video), Reading (passage + psalm, read-aloud, block tracker, Go deeper links), calendar and catch-up | Built |
 | **My Study Notes** — one entry per day with Q1–Q3 loaded, autosaving answers, own questions, reorder/delete, browse by day or book | Built |
 | **Member login** — email + password through Supabase Auth; start date set by each member | Built |
-| **Talk It Over** — groups, invite links, one thread per day | Database and privacy rules built; screens are the next phase |
+| **Talk It Over** — groups, invite links, one thread per day, Share a copy from notes | Built |
 | **Study Aggregate** — answers from your own notes, using Claude | Planned (phase 7) |
 
 ## Stack
@@ -23,6 +23,8 @@ This first build covers the private reading-and-notes side of the design:
 
 1. **Supabase project.** Create a project, then in the SQL editor run, in order:
    - `supabase/migrations/0001_schema.sql`
+   - `supabase/migrations/0002_grants.sql` (needed on newer Supabase projects)
+   - `supabase/migrations/0003_talk_it_over.sql`
    - `supabase/seed.sql` (loads all 358 plan days with their pre-reads and approved questions)
 
    In *Authentication → URL Configuration*, set the Site URL to your app's address and add `https://YOUR-DOMAIN/auth/confirm` (and `http://localhost:3000/auth/confirm`) to the redirect URLs.

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { saveProgress, type SegmentProgress } from "@/app/(app)/day/[day]/read/actions";
+import { loadVoicePrefs, pickVoice } from "@/lib/voice";
 
 type Block = { html: string; text: string };
 type PassageView = { label: string; blocks: Block[] | null; error?: string; externalUrl: string };
@@ -148,7 +149,10 @@ export default function Reader({ header, intro, day, passages, saved, position, 
     moveHere(p);
     els.current.get(key(p))?.scrollIntoView({ block: "center", behavior: "smooth" });
     const u = new SpeechSynthesisUtterance(block.text);
-    u.lang = "en-US";
+    const prefs = loadVoicePrefs();
+    const voice = pickVoice(window.speechSynthesis.getVoices(), prefs);
+    if (voice) { u.voice = voice; u.lang = voice.lang; } else u.lang = "en-US";
+    u.rate = prefs.rate;
     u.onend = () => {
       if (!playingRef.current) return;
       credit(p);
