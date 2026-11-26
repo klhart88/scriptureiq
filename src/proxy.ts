@@ -1,14 +1,24 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { supabaseEnv } from "@/lib/supabase/env";
 
 const PUBLIC_PATHS = ["/login", "/auth"];
 
 /** Refreshes the Supabase session cookie on every request and sends signed-out visitors to /login. */
 export async function proxy(request: NextRequest) {
+  const env = supabaseEnv();
+  if ("error" in env) {
+    // Say plainly what is missing instead of a bare "Internal Server Error".
+    return new NextResponse(`ScriptureIQ is not configured yet.\n\n${env.error}\n\nAdd it in Vercel → Settings → Environment Variables, then redeploy.`, {
+      status: 503,
+      headers: { "content-type": "text/plain; charset=utf-8" },
+    });
+  }
+
   let response = NextResponse.next({ request });
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    env.url,
+    env.key,
     {
       cookies: {
         getAll() {

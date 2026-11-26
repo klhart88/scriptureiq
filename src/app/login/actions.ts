@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { siteUrl } from "@/lib/supabase/env";
 
 export type AuthState = { error?: string; notice?: string };
 
@@ -23,7 +24,7 @@ export async function signIn(_: AuthState, form: FormData): Promise<AuthState> {
 
 export async function signUp(_: AuthState, form: FormData): Promise<AuthState> {
   const supabase = await createClient();
-  const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const origin = siteUrl() || ((await headers()).get("origin") ?? "");
   const password = String(form.get("password") ?? "");
   if (password.length < 8) return { error: "Use a password of at least 8 characters." };
   const { data, error } = await supabase.auth.signUp({

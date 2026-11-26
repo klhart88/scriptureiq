@@ -26,7 +26,7 @@ This first build covers the private reading-and-notes side of the design:
    - `supabase/seed.sql` (loads all 358 plan days with their pre-reads and approved questions)
 
    In *Authentication → URL Configuration*, set the Site URL to your app's address and add `https://YOUR-DOMAIN/auth/confirm` (and `http://localhost:3000/auth/confirm`) to the redirect URLs.
-2. **Environment.** Copy `.env.example` to `.env.local` and fill in the Supabase URL and publishable key.
+2. **Environment.** Copy `.env.example` to `.env.local` and fill in `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` (publishable or anon key — never the secret key) and `SITE_URL`. No `NEXT_PUBLIC_` prefix is needed: the app only talks to Supabase from the server.
 3. **Run locally.** `npm install`, then `npm run dev`, and open http://localhost:3000.
 4. **Deploy.** Import the repository in Vercel and add the same environment variables there.
 5. **NIV text (when ready).** Register at platform.youversion.com, accept the NIV licence for your app key, and set `YOUVERSION_APP_KEY`. Until then, each passage shows *Read on Bible.com* and *Mark as read*, so the tracker still works.
