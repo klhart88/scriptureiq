@@ -13,8 +13,13 @@ export async function saveSettings(_: SettingsState, form: FormData): Promise<Se
   const display_name = String(form.get("display_name") ?? "").trim();
   const start_date = String(form.get("start_date") ?? "");
   if (!/^\d{4}-\d{2}-\d{2}$/.test(start_date)) return { error: "Choose a start date." };
-  const { error } = await supabase.from("profiles").update({ display_name, start_date }).eq("id", data.user.id);
+  // Upsert, so a member whose profile row is missing (e.g. created before the schema existed) still saves.
+  const { data: saved, error } = await supabase
+    .from("profiles")
+    .upsert({ id: data.user.id, display_name, start_date }, { onConflict: "id" })
+    .select("id");
   if (error) return { error: error.message };
+  if (!saved?.length) return { error: "Your settings could not be saved. Please try again." };
   revalidatePath("/", "layout");
   if (form.get("welcome")) redirect("/today");
   return { notice: "Saved." };

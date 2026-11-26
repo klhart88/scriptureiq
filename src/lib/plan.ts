@@ -55,7 +55,7 @@ export function parseSegments(code: string): Segment[] {
     const name = BOOKS[book] ?? book;
     const start = Number(ch);
     if (v1) {
-      return [{ usfm: `${book}.${start}.${v1}-${book}.${start}.${v2}`, label: `${name} ${start}:${v1}–${v2}`, book, chapter: start, verses: [Number(v1), Number(v2)] as [number, number] }];
+      return [{ usfm: `${book}.${start}.${v1}-${v2}`, label: `${name} ${start}:${v1}–${v2}`, book, chapter: start, verses: [Number(v1), Number(v2)] as [number, number] }];
     }
     const end = chEnd ? Number(chEnd) : start;
     const out: Segment[] = [];

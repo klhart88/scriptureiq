@@ -22,7 +22,7 @@ test("code forms", () => {
   assert.deepEqual(parseSegments("2JN.1+3JN.1").map((s) => s.usfm), ["2JN.1", "3JN.1"]);
   const [p] = parseSegments("PSA.119.1-32");
   assert.equal(p.label, "Psalm 119:1–32");
-  assert.equal(p.usfm, "PSA.119.1-PSA.119.32");
+  assert.equal(p.usfm, "PSA.119.1-32"); // the form YouVersion accepts (checked against the live API)
 });
 
 test("dates", () => {

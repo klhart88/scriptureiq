@@ -23,10 +23,11 @@ export async function fetchPassage(segment: Segment): Promise<Passage> {
   const key = process.env.YOUVERSION_APP_KEY;
   if (!key) return { segment, blocks: null, error: "not-configured" };
   try {
-    const res = await fetch(`${API}/bibles/${NIV_ID}/passages/${encodeURIComponent(segment.usfm)}?format=html`, {
-      headers: { "X-YVP-App-Key": key, Accept: "application/json" },
-      cache: "no-store",
-    });
+    // Ask for HTML (paragraphs and verse numbers); fall back to the default plain text if that's refused.
+    const url = `${API}/bibles/${NIV_ID}/passages/${encodeURIComponent(segment.usfm)}`;
+    const opts = { headers: { "X-YVP-App-Key": key, Accept: "application/json" }, cache: "no-store" as const };
+    let res = await fetch(`${url}?format=html`, opts);
+    if (!res.ok && res.status !== 401 && res.status !== 403) res = await fetch(url, opts);
     if (!res.ok) return { segment, blocks: null, error: `YouVersion returned ${res.status}` };
     const json = (await res.json()) as { content?: string };
     const blocks = toBlocks(sanitize(json.content ?? ""));
