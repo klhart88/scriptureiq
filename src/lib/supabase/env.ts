@@ -53,12 +53,3 @@ export function siteUrl() {
   return first(process.env.SITE_URL, process.env.NEXT_PUBLIC_SITE_URL).replace(/\/+$/, "");
 }
 
-/** Anthropic API key for Study Aggregate (server only). Empty when not set up yet. */
-export function anthropicKey() {
-  return first(process.env.ANTHROPIC_API_KEY);
-}
-
-/** Model for Study Aggregate; can be changed in Vercel without a code change. */
-export function aggregateModel() {
-  return first(process.env.ANTHROPIC_MODEL) || "claude-sonnet-5-5";
-}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { answerParts } from "@/lib/aggregate-cite";
+import { answerParts } from "@/lib/aggregate-agent";
 import { deleteAsk } from "@/app/(app)/aggregate/actions";
 import ConfirmButton from "@/components/talk/ConfirmButton";
 

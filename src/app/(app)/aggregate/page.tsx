@@ -1,23 +1,17 @@
 import Link from "next/link";
 import { requireMember } from "@/lib/data";
-import { asksInLastDay, DAILY_LIMIT, FEW_NOTES, notesOverview } from "@/lib/aggregate";
-import { anthropicKey } from "@/lib/supabase/env";
+import { FEW_NOTES, notesOverview } from "@/lib/aggregate";
 import AskForm from "@/components/aggregate/AskForm";
 import AskItem, { type Ask } from "@/components/aggregate/AskItem";
 
 export const metadata = { title: "Study Aggregate · ScriptureIQ" };
-// Answers can take a little while: Claude searches your notes a few times before writing.
-export const maxDuration = 60;
 
 export default async function AggregatePage() {
-  const { supabase } = await requireMember();
-  const [overview, { data: asks }, count] = await Promise.all([
+  const { supabase, profile } = await requireMember();
+  const [overview, { data: asks }] = await Promise.all([
     notesOverview(supabase),
     supabase.from("aggregate_asks").select("id, question, answer, cited_days, created_at").order("created_at", { ascending: false }).limit(30),
-    asksInLastDay(supabase),
   ]);
-  const configured = Boolean(anthropicKey());
-  const remaining = Math.max(0, DAILY_LIMIT - count);
   const list = (asks ?? []) as Ask[];
 
   return (
@@ -39,12 +33,7 @@ export default async function AggregatePage() {
         <div><strong>{overview.books ? overview.books.split(", ").length : 0}</strong><span className="muted small">books</span></div>
       </div>
 
-      {!configured ? (
-        <div className="card">
-          <h3>Not switched on yet</h3>
-          <p className="muted">Study Aggregate needs an Anthropic API key before it can answer. Everything else in ScriptureIQ works without it.</p>
-        </div>
-      ) : overview.answered === 0 ? (
+      {overview.answered === 0 ? (
         <div className="card">
           <h3>Nothing to draw from yet</h3>
           <p className="muted">Answer a few reflection questions in My Study Notes, then come back and ask what you&rsquo;ve been learning.</p>
@@ -54,7 +43,7 @@ export default async function AggregatePage() {
         <p className="hint">You&rsquo;ve answered {overview.answered} reflection{overview.answered === 1 ? "" : "s"} so far, so answers will be limited.</p>
       ) : null}
 
-      <AskForm disabled={!configured || overview.answered === 0 || remaining === 0} remaining={remaining} />
+      <AskForm overview={overview} name={profile.display_name} />
 
       {list.length > 0 && (
         <>
@@ -64,8 +53,9 @@ export default async function AggregatePage() {
       )}
 
       <p className="muted small footnote">
-        When you ask, your question and the notes it needs are sent to Anthropic&rsquo;s Claude to write the answer. Your
-        questions and answers are saved privately to your account; delete any of them at any time.
+        Optional feature. When you ask, your question and the notes it needs go from this device to Anthropic&rsquo;s Claude,
+        under your own Anthropic account. Your key stays on this device. Your questions and answers are saved privately to your
+        ScriptureIQ account; delete any of them at any time.
       </p>
     </>
   );
