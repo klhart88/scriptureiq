@@ -9,17 +9,10 @@ const STEPS: { id: DayStep; label: string; href: (d: number) => string }[] = [
   { id: "reflections", label: "Reflections", href: (d) => `/notes/${d}` },
 ];
 
-/**
- * Step bar shown on every part of a day: jump between Before you read, Reading and Reflections in
- * either direction, or move to the same step of the previous / next day.
- */
+/** Step bar for the parts of one day. It only moves between steps; changing days is done with DayFooter. */
 export default function DayNav({ day, step }: { day: number; step: DayStep }) {
-  const current = STEPS.find((s) => s.id === step)!;
   return (
-    <nav className="daynav" aria-label={`Day ${day}`}>
-      {day > 1
-        ? <Link className="dayarrow" href={current.href(day - 1)} aria-label={`Day ${day - 1}`}>‹</Link>
-        : <span className="dayarrow" aria-hidden />}
+    <nav className="daynav" aria-label={`Day ${day} steps`}>
       <ol className="steps">
         {STEPS.map((s, i) => (
           <li key={s.id}>
@@ -30,9 +23,17 @@ export default function DayNav({ day, step }: { day: number; step: DayStep }) {
           </li>
         ))}
       </ol>
-      {day < TOTAL_DAYS
-        ? <Link className="dayarrow" href={current.href(day + 1)} aria-label={`Day ${day + 1}`}>›</Link>
-        : <span className="dayarrow" aria-hidden />}
+    </nav>
+  );
+}
+
+/** Previous / next day links at the bottom of a page, keeping the same step. */
+export function DayFooter({ day, step }: { day: number; step: DayStep }) {
+  const href = STEPS.find((s) => s.id === step)!.href;
+  return (
+    <nav className="dayfooter" aria-label="Other days">
+      {day > 1 ? <Link href={href(day - 1)}>← Day {day - 1}</Link> : <span />}
+      {day < TOTAL_DAYS ? <Link href={href(day + 1)}>Day {day + 1} →</Link> : <span />}
     </nav>
   );
 }

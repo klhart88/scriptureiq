@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import DayNav from "@/components/DayNav";
+import DayNav, { DayFooter } from "@/components/DayNav";
 import NoteEditor from "@/components/NoteEditor";
 import { getPlanDay, requireMember } from "@/lib/data";
 import { dateForDay, formatDate, parseDayParam } from "@/lib/plan";
@@ -18,13 +18,14 @@ export default async function NoteEntryPage({ params }: { params: Promise<{ day:
 
   return (
     <article>
-      <DayNav day={day} step="reflections" />
+      <div className="dayhead"><DayNav day={day} step="reflections" /></div>
       <div className="eyebrow">
         <Link href="/notes">My Study Notes</Link> · Day {day}
         {profile.start_date && <> · {formatDate(dateForDay(profile.start_date, day))}</>}
       </div>
       <h1>{d.reading}</h1>
       <NoteEditor key={entryId as string} day={day} entryId={entryId as string} items={items ?? []} />
+      <DayFooter day={day} step="reflections" />
     </article>
   );
 }

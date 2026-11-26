@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { saveProgress, type SegmentProgress } from "@/app/(app)/day/[day]/read/actions";
 
 type Block = { html: string; text: string };
@@ -34,8 +34,8 @@ function restoreRead(saved: SegmentProgress, passages: PassageView[]): ReadMap {
   return map;
 }
 
-export default function Reader({ day, passages, saved, position, completed }: {
-  day: number; passages: PassageView[]; saved: SegmentProgress; position: Pos | null; completed: boolean;
+export default function Reader({ header, intro, day, passages, saved, position, completed }: {
+  header?: ReactNode; intro?: ReactNode; day: number; passages: PassageView[]; saved: SegmentProgress; position: Pos | null; completed: boolean;
 }) {
   const canSpeak = useCanSpeak();
   const [read, setRead] = useState<ReadMap>(() => restoreRead(saved, passages));
@@ -181,7 +181,9 @@ export default function Reader({ day, passages, saved, position, completed }: {
 
   return (
     <div>
-      <div className="sticky">
+      <div className="dayhead">
+        {header}
+        <div className="readbar">
         <div className="legend" aria-hidden>
           {hasText && <span><b className="line" style={{ background: "var(--brand)" }} />Where you are</span>}
           <span><b style={{ background: "var(--read)" }} />Read</span>
@@ -213,7 +215,9 @@ export default function Reader({ day, passages, saved, position, completed }: {
             </span>
           )}
         </div>
+        </div>
       </div>
+      {intro}
 
       {passages.map((p, i) => (
         <section key={i} className="card">

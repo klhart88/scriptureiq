@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import DayNav from "@/components/DayNav";
+import DayNav, { DayFooter } from "@/components/DayNav";
 import Reader from "@/components/Reader";
 import { bibleComUrl, bibleConfigured, fetchPassage, NIV_COPYRIGHT } from "@/lib/bible";
 import { getPlanDay, requireMember } from "@/lib/data";
@@ -20,15 +20,19 @@ export default async function ReadingPage({ params }: { params: Promise<{ day: s
 
   return (
     <article>
-      <DayNav day={day} step="reading" />
-      <div className="eyebrow">Day {day}</div>
-      <h1>{d.reading} <span className="muted small">· {d.psalm}</span></h1>
-      {!bibleConfigured() && (
-        <p className="small muted">
-          The NIV text will appear here once the YouVersion app key is added. Until then, open each passage on Bible.com and mark it read.
-        </p>
-      )}
       <Reader
+        header={<DayNav day={day} step="reading" />}
+        intro={
+          <>
+          <div className="eyebrow">Day {day}</div>
+          <h1>{d.reading} <span className="muted small">· {d.psalm}</span></h1>
+          {!bibleConfigured() && (
+            <p className="small muted">
+              The NIV text will appear here once the YouVersion app key is added. Until then, open each passage on Bible.com and mark it read.
+            </p>
+          )}
+          </>
+        }
         day={day}
         passages={passages.map((p) => ({ label: p.segment.label, blocks: p.blocks, error: p.error, externalUrl: bibleComUrl(p.segment) }))}
         saved={(progress?.segments as SegmentProgress) ?? {}}
@@ -49,6 +53,8 @@ export default async function ReadingPage({ params }: { params: Promise<{ day: s
         )}
         <Link className="btn block" href={`/notes/${day}`}>Write today&rsquo;s reflections</Link>
       </section>
+
+      <DayFooter day={day} step="reading" />
     </article>
   );
 }
