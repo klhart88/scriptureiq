@@ -8,6 +8,7 @@
   --brand-soft: #e6edf5;
   --accent: #b5672b;
   --ok: #2f7a4f;
+  --read: #b9dcc6;
   --radius: 12px;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -15,7 +16,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #14181d; --surface: #1c2229; --ink: #e8e6e1; --muted: #9aa3ae; --line: #2c343d;
-    --brand: #8fb3dc; --brand-soft: #22303f; --accent: #e09a5f; --ok: #6cc08f;
+    --brand: #8fb3dc; --brand-soft: #22303f; --accent: #e09a5f; --ok: #6cc08f; --read: #2d5a40;
   }
 }
 * { box-sizing: border-box; }
@@ -51,15 +52,18 @@ label { display: block; font-weight: 600; margin-bottom: .3rem; font-size: .92re
 .scripture .block { border-radius: 6px; padding: .1rem .3rem; margin: 0 -.3rem .6rem; transition: background .2s; }
 .scripture .block.active { background: var(--brand-soft); }
 .scripture sup, .scripture .yv-vlbl, .scripture .verse-num, .scripture .v { font-family: var(--sans); font-size: .62em; font-weight: 600; color: var(--muted); vertical-align: super; line-height: 0; margin: 0 .2em 0 .15em; }
-.tracker { display: flex; gap: 4px; margin: .5rem 0 .35rem; }
-.tracker span { flex: 1; height: 10px; border-radius: 5px; background: var(--line); overflow: hidden; position: relative; }
-/* light layer: paragraphs actually read (listened to, or stayed in view long enough to read) */
-.tracker span i.read { position: absolute; inset: 0 auto 0 0; background: #b9dcc6; transition: width .3s; }
-/* dark layer: where you are now; follows scrolling and audio in both directions */
-.tracker span i.here { position: absolute; left: 0; top: 3px; bottom: 3px; background: var(--brand); border-radius: 2px; transition: width .2s; }
-.tracker span.done i.read { background: var(--ok); }
-.legend { display: flex; gap: .9rem; font-size: .72rem; color: var(--muted); margin-bottom: .2rem; }
+.tracker { display: flex; gap: 4px; margin: .45rem 0 .35rem; }
+/* Each section is a cell with two rows that never overlap, so each colour always means one thing. */
+.tracker .cell { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.tracker .bar, .tracker .pos { position: relative; border-radius: 4px; overflow: hidden; }
+.tracker .bar { height: 9px; background: var(--line); }
+.tracker .pos { height: 3px; background: transparent; }
+.tracker .bar i { position: absolute; inset: 0 auto 0 0; background: var(--read); transition: width .3s; }
+.tracker .cell.done .bar i { background: var(--ok); }
+.tracker .pos i { position: absolute; inset: 0 auto 0 0; background: var(--brand); border-radius: 2px; transition: width .2s; }
+.legend { display: flex; gap: .9rem; flex-wrap: wrap; font-size: .72rem; color: var(--muted); margin-bottom: .1rem; }
 .legend b { display: inline-block; width: 14px; height: 8px; border-radius: 3px; vertical-align: middle; margin-right: .3rem; }
+.legend b.line { height: 3px; }
 .sticky { position: sticky; top: 0; background: var(--bg); padding: .5rem 0; z-index: 5; }
 .player { display: flex; gap: .4rem; align-items: center; }
 .qa { border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 1rem; }

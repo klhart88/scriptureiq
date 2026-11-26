@@ -86,6 +86,7 @@ export default function Reader({ day, passages, saved, position, completed }: {
   useEffect(() => {
     const obs = new IntersectionObserver((entries) => {
       if (playingRef.current) return; // audio drives the position while it plays
+      if (window.scrollY < 8) return; // the top of the page is handled below
       for (const e of entries) {
         if (e.isIntersecting) {
           const el = e.target as HTMLElement;
@@ -94,8 +95,16 @@ export default function Reader({ day, passages, saved, position, completed }: {
       }
     }, { rootMargin: "-35% 0px -60% 0px", threshold: 0 });
     els.current.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
-  }, [moveHere]);
+    // At the very top the first paragraph can't reach the reading line, so the top counts as paragraph 1.
+    const atTop = () => {
+      if (!playingRef.current && window.scrollY < 8) {
+        const first = passages.findIndex((p) => p.blocks?.length);
+        if (first >= 0) moveHere({ segment: first, block: 0 });
+      }
+    };
+    window.addEventListener("scroll", atTop, { passive: true });
+    return () => { obs.disconnect(); window.removeEventListener("scroll", atTop); };
+  }, [moveHere, passages]);
 
   // Time spent on the paragraph at the reading line earns it a "read" credit.
   useEffect(() => {
@@ -173,22 +182,22 @@ export default function Reader({ day, passages, saved, position, completed }: {
   return (
     <div>
       <div className="sticky">
-        {hasText && (
-          <div className="legend" aria-hidden>
-            <span><b style={{ background: "var(--brand)" }} />Where you are</span>
-            <span><b style={{ background: "#b9dcc6" }} />Read</span>
-          </div>
-        )}
+        <div className="legend" aria-hidden>
+          {hasText && <span><b className="line" style={{ background: "var(--brand)" }} />Where you are</span>}
+          <span><b style={{ background: "var(--read)" }} />Read</span>
+          <span><b style={{ background: "var(--ok)" }} />Section complete</span>
+        </div>
         <div className="tracker" aria-label="Reading progress">
           {passages.map((p, i) => {
             const total = totalFor(p);
-            const readPct = Math.min(100, ((read[i]?.size ?? 0) / total) * 100);
+            const done = segDone(read, i);
+            const readPct = done ? 100 : Math.min(100, ((read[i]?.size ?? 0) / total) * 100);
             const herePct = !p.blocks ? 0 : i < here.segment ? 100 : i === here.segment ? ((here.block + 1) / total) * 100 : 0;
             return (
-              <span key={i} title={`${p.label}: ${read[i]?.size ?? 0} of ${total} read`} className={segDone(read, i) ? "done" : undefined}>
-                <i className="read" style={{ width: `${readPct}%` }} />
-                {hasText && <i className="here" style={{ width: `${herePct}%` }} />}
-              </span>
+              <div key={i} className={`cell${done ? " done" : ""}`} title={`${p.label}: ${done ? "complete" : `${read[i]?.size ?? 0} of ${total} paragraphs read`}`}>
+                <span className="bar"><i style={{ width: `${readPct}%` }} /></span>
+                {hasText && <span className="pos"><i style={{ width: `${herePct}%` }} /></span>}
+              </div>
             );
           })}
         </div>
