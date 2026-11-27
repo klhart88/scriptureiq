@@ -142,3 +142,19 @@ label { display: block; font-weight: 600; margin-bottom: .3rem; font-size: .92re
 .card.danger h2 { color: #b3261e; }
 .btn.danger-btn { color: #b3261e; border-color: #b3261e; }
 .btn.danger-solid { background: #b3261e; border-color: #b3261e; }
+/* Member guide */
+.guidelink { display: flex; flex-direction: column; gap: .15rem; text-decoration: none; color: var(--ink); }
+.guidelink strong { color: var(--brand); }
+.guidelink strong::after { content: " →"; }
+.guide details > summary { cursor: pointer; font-weight: 600; font-size: 1.05rem; list-style: none; }
+.guide details > summary::-webkit-details-marker { display: none; }
+.guide details > summary::before { content: "▸ "; color: var(--muted); }
+.guide details[open] > summary::before { content: "▾ "; }
+.guide details[open] > summary { margin-bottom: .5rem; }
+.guide li { margin-bottom: .35rem; }
+.swatch { display: inline-block; width: 1.4rem; height: .55rem; border-radius: 3px; vertical-align: middle; margin-right: .15rem; }
+.swatch.navy { height: .2rem; background: var(--brand); }
+.swatch.light { background: var(--read); }
+.swatch.solid { background: var(--ok); }
+.faq dt { font-weight: 600; margin-top: .6rem; }
+.faq dd { margin: .15rem 0 0; color: var(--muted); }

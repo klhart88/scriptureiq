@@ -13,6 +13,12 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
     <article>
       <h1>{welcome ? "Welcome to ScriptureIQ" : "Settings"}</h1>
       {welcome && <p className="muted">Choose the day you begin the plan. Day 1 falls on that date, and each day after follows in order.</p>}
+      {!welcome && (
+        <Link className="card guidelink" href="/settings/guide">
+          <strong>How to use ScriptureIQ</strong>
+          <span className="muted small">A short guide to every part of the app</span>
+        </Link>
+      )}
       <SettingsForm displayName={profile.display_name} startDate={profile.start_date} welcome={welcome} />
       {!welcome && <VoiceSettings />}
       {!welcome && <AiKeySettings />}
