@@ -27,7 +27,7 @@ export default async function ThreadPage({ params, searchParams }: { params: Pro
   return (
     <article>
       <AutoRefresh />
-      <div className="eyebrow"><Link href="/groups">Talk It Over</Link> · <Link href={`/groups/${id}`}>{group.name}</Link></div>
+      <div className="eyebrow"><Link href="/groups">Discuss It</Link> · <Link href={`/groups/${id}`}>{group.name}</Link></div>
       <h1>Day {day} · {d.reading}</h1>
       <p className="small"><Link href={`/day/${day}`}>Open this day&rsquo;s reading</Link> · <Link href={`/notes/${day}`}>My notes for this day</Link></p>
 

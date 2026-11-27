@@ -1,14 +1,12 @@
-import Link from "next/link";
 import Nav from "@/components/Nav";
+import TopBar from "@/components/TopBar";
 import { requireMember } from "@/lib/data";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   await requireMember();
   return (
     <>
-      <header className="topbar">
-        <Link href="/today" className="brand">ScriptureIQ</Link>
-      </header>
+      <TopBar />
       <main className="shell">{children}</main>
       <Nav />
     </>

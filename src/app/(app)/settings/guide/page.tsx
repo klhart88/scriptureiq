@@ -25,6 +25,16 @@ export default async function GuidePage() {
       </details>
 
       <details className="card">
+        <summary>The Know Him More home page</summary>
+        <ul>
+          <li>ScriptureIQ opens on the home page for your study, <em>Know Him More</em>.</li>
+          <li>Tap the large <strong>Day … of 358</strong> button to open today&rsquo;s reading. It shows <strong>Completed ✓</strong> once you&rsquo;ve finished the day.</li>
+          <li>Swipe the strip of days at the bottom to see every day with its date (today is centred and highlighted, finished days are green). Tap any day to open it.</li>
+          <li>From any other screen, tap <strong>ScriptureIQ</strong> at the top to come back here.</li>
+        </ul>
+      </details>
+
+      <details className="card">
         <summary>Your daily reading (Today)</summary>
         <p>Each day has three steps, shown at the top of the screen. Move between them by tapping a step.</p>
         <ol>
@@ -52,10 +62,10 @@ export default async function GuidePage() {
       </details>
 
       <details className="card">
-        <summary>Talk It Over (groups)</summary>
+        <summary>Discuss It (groups)</summary>
         <ul>
           <li><strong>Join a group</strong> by opening the invite link someone sent you, then tapping Join group.</li>
-          <li><strong>Start a group</strong> from Talk It Over, then copy its invite link and send it to people you want in it.</li>
+          <li><strong>Start a group</strong> from Discuss It, then copy its invite link and send it to people you want in it.</li>
           <li>Each plan day has its own thread. Open <strong>Today&rsquo;s thread</strong>, or any recent conversation, and post a reply. You can edit or delete your own posts.</li>
           <li><strong>Share a copy</strong> of a note answer from Study Notes to post it in a group. Your private note stays private; the answer then shows &ldquo;✓ Shared with&rdquo; the group and the date.</li>
           <li>Group owners can make a new invite link (current members stay), remove members, or delete the group.</li>

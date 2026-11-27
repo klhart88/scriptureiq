@@ -30,7 +30,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
 
   return (
     <article>
-      <div className="eyebrow"><Link href="/groups">Talk It Over</Link></div>
+      <div className="eyebrow"><Link href="/groups">Discuss It</Link></div>
       <h1>{group.name}</h1>
       {joined && <p className="notice">Welcome to {group.name}! Open today&rsquo;s thread to join the conversation.</p>}
       {created && <p className="notice">Group created. Copy the invite link below and send it to the people you&rsquo;d like to join.</p>}

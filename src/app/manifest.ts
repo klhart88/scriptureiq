@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "ScriptureIQ",
     short_name: "ScriptureIQ",
     description: "A companion for the One Story That Leads to Jesus reading plan.",
-    start_url: "/today",
+    start_url: "/home",
     display: "standalone",
     background_color: "#f7f5f0",
     theme_color: "#1f3a5f",

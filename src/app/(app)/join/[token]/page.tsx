@@ -13,7 +13,7 @@ export default async function JoinPage({ params, searchParams }: { params: Promi
       <article className="card">
         <h1>Invite not found</h1>
         <p>This invite link is no longer valid. The group owner may have made a new one. Ask them to send it again.</p>
-        <Link className="btn secondary" href="/groups">Go to Talk It Over</Link>
+        <Link className="btn secondary" href="/groups">Go to Discuss It</Link>
       </article>
     );
   }

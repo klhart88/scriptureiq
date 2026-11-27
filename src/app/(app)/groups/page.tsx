@@ -13,7 +13,7 @@ export default async function GroupsPage({ searchParams }: { searchParams: Promi
 
   return (
     <article>
-      <h1>Talk It Over</h1>
+      <h1>Discuss It</h1>
       <p className="muted small">Each group has one conversation per plan day. Your notes stay private unless you choose <strong>Share a copy</strong>.</p>
       {sp.left && <p className="notice">You left the group.</p>}
       {sp.deleted && <p className="notice">The group was deleted.</p>}

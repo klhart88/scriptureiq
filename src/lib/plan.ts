@@ -69,13 +69,17 @@ export function daySegments(d: Pick<PlanDay, "reading_code" | "psalm_code">): Se
   return [...parseSegments(d.reading_code), ...parseSegments(d.psalm_code)];
 }
 
-/** Plan day for a calendar date, given the member's start date (Day 1). Clamped to 1–358. */
-export function dayForDate(startDate: string, today: Date = new Date()): number {
+/** Plan day for a calendar date without clamping: below 1 before the start date, above 358 after the plan ends. */
+export function rawDayForDate(startDate: string, today: Date = new Date()): number {
   const [y, m, d] = startDate.split("-").map(Number);
   const start = Date.UTC(y, m - 1, d);
   const now = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-  const n = Math.floor((now - start) / 86_400_000) + 1;
-  return Math.min(Math.max(n, 1), TOTAL_DAYS);
+  return Math.floor((now - start) / 86_400_000) + 1;
+}
+
+/** Plan day for a calendar date, given the member's start date (Day 1). Clamped to 1–358. */
+export function dayForDate(startDate: string, today: Date = new Date()): number {
+  return Math.min(Math.max(rawDayForDate(startDate, today), 1), TOTAL_DAYS);
 }
 
 /** Calendar date (YYYY-MM-DD) for a plan day. */

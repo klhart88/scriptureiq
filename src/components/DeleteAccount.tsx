@@ -22,7 +22,7 @@ export default function DeleteAccount() {
           <p className="small">This can&rsquo;t be undone. It permanently deletes:</p>
           <ul className="small">
             <li>your study notes, reading progress and Study Aggregate answers;</li>
-            <li>your posts in Talk It Over groups, and your membership in them;</li>
+            <li>your posts in Discuss It groups, and your membership in them;</li>
             <li>your sign-in, so this email address will need to sign up again to use ScriptureIQ.</li>
           </ul>
           <p className="small">Groups you own will pass to their longest-standing member. A group with no other members is deleted.</p>

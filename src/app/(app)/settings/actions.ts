@@ -21,7 +21,7 @@ export async function saveSettings(_: SettingsState, form: FormData): Promise<Se
   if (error) return { error: error.message };
   if (!saved?.length) return { error: "Your settings could not be saved. Please try again." };
   revalidatePath("/", "layout");
-  if (form.get("welcome")) redirect("/today");
+  if (form.get("welcome")) redirect("/home");
   return { notice: "Saved." };
 }
 
