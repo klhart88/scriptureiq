@@ -2,16 +2,16 @@ import Link from "next/link";
 import { answerParts } from "@/lib/aggregate-agent";
 import { deleteAsk } from "@/app/(app)/aggregate/actions";
 import ConfirmButton from "@/components/talk/ConfirmButton";
+import LocalTime from "@/components/LocalTime";
 
 export type Ask = { id: string; question: string; answer: string; cited_days: number[]; created_at: string };
 
 export default function AskItem({ a, open }: { a: Ask; open: boolean }) {
-  const when = new Date(a.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   return (
     <details className="card askitem" open={open}>
       <summary>
         <span className="q">{a.question}</span>
-        <span className="muted small">{when}</span>
+        <span className="muted small"><LocalTime iso={a.created_at} /></span>
       </summary>
       <p className="voice muted small">Drafted in your voice from your notes</p>
       {a.answer.split(/\n{2,}/).map((para, i) => (

@@ -6,7 +6,8 @@ import CopyLink from "@/components/talk/CopyLink";
 import TodayThreadLink from "@/components/talk/TodayThreadLink";
 import { deleteGroup, leaveGroup, regenerateInvite, removeMember } from "../actions";
 import { requireMember } from "@/lib/data";
-import { inviteUrl, memberNames, timeAgo, type Group } from "@/lib/groups";
+import { inviteUrl, memberNames, type Group } from "@/lib/groups";
+import LocalTime from "@/components/LocalTime";
 import { siteUrl } from "@/lib/supabase/env";
 
 export default async function GroupPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string; joined?: string }> }) {
@@ -50,7 +51,7 @@ export default async function GroupPage({ params, searchParams }: { params: Prom
                 <Link href={`/groups/${id}/day/${a.day}`}>
                   <div className="spread">
                     <span><strong>Day {a.day}</strong> · {reading.get(a.day)}</span>
-                    <span className="small muted">{a.post_count} post{a.post_count === 1 ? "" : "s"} · {timeAgo(a.last_post_at)}</span>
+                    <span className="small muted">{a.post_count} post{a.post_count === 1 ? "" : "s"} · <LocalTime iso={a.last_post_at} mode="ago" /></span>
                   </div>
                 </Link>
               </li>

@@ -24,3 +24,17 @@ export async function saveSettings(_: SettingsState, form: FormData): Promise<Se
   if (form.get("welcome")) redirect("/today");
   return { notice: "Saved." };
 }
+
+export type DeleteState = { error?: string };
+
+/** Permanently deletes the signed-in member's account (see migration 0006), then signs them out. */
+export async function deleteAccount(_: DeleteState, form: FormData): Promise<DeleteState> {
+  if (String(form.get("confirm") ?? "").trim() !== "DELETE") return { error: "Type DELETE to confirm." };
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) redirect("/login");
+  const { error } = await supabase.rpc("delete_my_account");
+  if (error) return { error: "Your account couldn't be deleted. Please try again." };
+  await supabase.auth.signOut();
+  redirect("/login?deleted=1");
+}

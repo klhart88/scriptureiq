@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { deletePost, updatePost } from "@/app/(app)/groups/actions";
 
 export default function PostItem({ id, groupId, day, author, when, edited, body, canEdit, canDelete }: {
-  id: string; groupId: string; day: number; author: string; when: string; edited: boolean; body: string; canEdit: boolean; canDelete: boolean;
+  id: string; groupId: string; day: number; author: string; when: React.ReactNode; edited: boolean; body: string; canEdit: boolean; canDelete: boolean;
 }) {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(body);

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import LocalTime from "@/components/LocalTime";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { addQuestion, deleteItem, reorderItems, saveAnswer } from "@/app/(app)/notes/actions";
 
@@ -105,7 +106,7 @@ export default function NoteEditor({ day, entryId, items: initial }: { day: numb
           <Answer item={it} entryId={entryId} />
           {it.last_shared_at ? (
             <div className="row small">
-              <span className="tag shared">✓ Shared{it.last_shared_group ? ` with ${it.last_shared_group}` : ""} · {new Date(it.last_shared_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+              <span className="tag shared">✓ Shared{it.last_shared_group ? ` with ${it.last_shared_group}` : ""} · <LocalTime iso={it.last_shared_at} /></span>
               <Link className="btn ghost small" href={`/notes/${day}/share?item=${it.id}`}>Share again</Link>
             </div>
           ) : (

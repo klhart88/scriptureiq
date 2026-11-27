@@ -4,7 +4,8 @@ import AutoRefresh from "@/components/talk/AutoRefresh";
 import PostComposer from "@/components/talk/PostComposer";
 import PostItem from "@/components/talk/PostItem";
 import { getPlanDay, requireMember } from "@/lib/data";
-import { memberNames, timeAgo, type Group, type Post } from "@/lib/groups";
+import { memberNames, type Group, type Post } from "@/lib/groups";
+import LocalTime from "@/components/LocalTime";
 import { parseDayParam, TOTAL_DAYS } from "@/lib/plan";
 
 export default async function ThreadPage({ params, searchParams }: { params: Promise<{ id: string; day: string }>; searchParams: Promise<{ shared?: string }> }) {
@@ -52,7 +53,7 @@ export default async function ThreadPage({ params, searchParams }: { params: Pro
               groupId={id}
               day={day}
               author={p.author_id === user.id ? "You" : names.get(p.author_id) ?? "Former member"}
-              when={timeAgo(p.created_at)}
+              when={<LocalTime iso={p.created_at} mode="ago" />}
               edited={new Date(p.updated_at).getTime() - new Date(p.created_at).getTime() > 5000}
               body={p.body}
               canEdit={p.author_id === user.id}

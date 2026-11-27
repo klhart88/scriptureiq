@@ -1,3 +1,4 @@
+import LocalTime from "@/components/LocalTime";
 import Link from "next/link";
 import { requireMember } from "@/lib/data";
 
@@ -20,7 +21,7 @@ export default async function NotesIndex({ searchParams }: { searchParams: Promi
       <Link href={`/notes/${r.day}`}>
         <div className="spread">
           <span><strong>Day {r.day}</strong> · {r.plan_days?.reading}</span>
-          <span className="small muted">{new Date(r.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+          <span className="small muted"><LocalTime iso={r.updated_at} /></span>
         </div>
       </Link>
     </li>

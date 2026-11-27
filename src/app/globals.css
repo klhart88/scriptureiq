@@ -138,3 +138,7 @@ label { display: block; font-weight: 600; margin-bottom: .3rem; font-size: .92re
 .listening .dot { flex-shrink: 0; width: .65rem; height: .65rem; border-radius: 50%; background: #c0392b; animation: pulse 1.2s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: .25; } }
 .btn.stop { background: #c0392b; border-color: #c0392b; }
+.card.danger { border-color: #e7c2bd; }
+.card.danger h2 { color: #b3261e; }
+.btn.danger-btn { color: #b3261e; border-color: #b3261e; }
+.btn.danger-solid { background: #b3261e; border-color: #b3261e; }

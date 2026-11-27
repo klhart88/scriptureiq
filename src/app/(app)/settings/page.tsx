@@ -2,6 +2,7 @@ import Link from "next/link";
 import SettingsForm from "@/components/SettingsForm";
 import VoiceSettings from "@/components/VoiceSettings";
 import AiKeySettings from "@/components/AiKeySettings";
+import DeleteAccount from "@/components/DeleteAccount";
 import { requireMember } from "@/lib/data";
 import { signOut } from "@/app/login/actions";
 
@@ -23,6 +24,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
           <form action={signOut}><button className="btn ghost">Sign out</button></form>
         </div>
       </section>
+      {!welcome && <DeleteAccount />}
       <section className="card small muted">
         <p>Your notes, reading progress and answers are private to your account. Only posts you write in a group are seen by that group.</p>
         <p style={{ marginBottom: 0 }}>Reading plan, videos and links: BibleProject, <em>One Story That Leads to Jesus</em>. BibleProject is the author and owner of this content. To find more BibleProject resources, visit bibleproject.com.</p>
