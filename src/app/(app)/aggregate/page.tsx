@@ -54,7 +54,8 @@ export default async function AggregatePage() {
 
       <p className="muted small footnote">
         Optional feature. When you ask, your question and the notes it needs go from this device to Anthropic&rsquo;s Claude,
-        under your own Anthropic account. Your key stays on this device. Your questions and answers are saved privately to your
+        under your own Anthropic account. Your key stays on this device. Spoken questions use your browser&rsquo;s built-in
+        speech recognition (for example Google&rsquo;s in Chrome, Apple&rsquo;s in Safari) to turn your words into text. Your questions and answers are saved privately to your
         ScriptureIQ account; delete any of them at any time.
       </p>
     </>

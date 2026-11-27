@@ -36,12 +36,16 @@ export default function AiKeySettings() {
         key, and set a monthly spending limit there.
       </p>
       {ai && <p className="small">Key on this device: <code>{maskKey(ai.key)}</code></p>}
-      <label htmlFor="ai_key">{ai ? "Replace key" : "Anthropic API key"}</label>
-      <input id="ai_key" type="password" autoComplete="off" spellCheck={false} placeholder="sk-ant-…" value={key} onChange={(e) => setKey(e.target.value)} />
-      <label htmlFor="ai_model">Model</label>
-      <select id="ai_model" value={chosen} onChange={(e) => setModel(e.target.value)}>
-        {MODELS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
-      </select>
+      <div className="field">
+        <label htmlFor="ai_key">{ai ? "Replace key" : "Anthropic API key"}</label>
+        <input id="ai_key" type="password" autoComplete="off" spellCheck={false} placeholder="sk-ant-…" value={key} onChange={(e) => setKey(e.target.value)} />
+      </div>
+      <div className="field">
+        <label htmlFor="ai_model">Model</label>
+        <select id="ai_model" value={chosen} onChange={(e) => setModel(e.target.value)}>
+          {MODELS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+        </select>
+      </div>
       {msg.error && <p className="error">{msg.error}</p>}
       {msg.ok && <p className="notice">{msg.ok}</p>}
       <div className="row">
